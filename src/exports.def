@@ -1,0 +1,11 @@
+; Copyright (c) 2018 Emurasoft Inc.
+; Licensed under the MIT license. See LICENSE for details.
+
+EXPORTS
+	OnCommand			@1
+	QueryStatus			@2
+	OnEvents			@3
+	GetMenuTextID		@4
+	GetStatusMessageID	@5
+	GetBitmapID			@6
+	PlugInProc			@7
