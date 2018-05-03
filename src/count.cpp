@@ -87,7 +87,7 @@ void countText( wchar_t* text,
 {
 	wchar_t* end = text + textSize - 1;
 
-	for (wchar_t* pos = text; pos < end; pos++) {
+	for (wchar_t* pos = text; pos < end; ++pos) {
 
 		// Number of characters
 		if( pos == text || baseCharacter( pos ) ) {
@@ -235,7 +235,7 @@ count( bool* selection,
 
 		GET_LINE_INFO lineInfo;
 
-		for (long i = 0; i < counts[logicalLines]; i++) {
+		for (long i = 0; i < counts[logicalLines]; ++i) {
 
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
 
