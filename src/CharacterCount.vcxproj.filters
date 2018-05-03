@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="registry.cpp" />
+    <ClCompile Include="count.cpp" />
+    <ClCompile Include="settings.cpp" />
+    <ClCompile Include="CharacterCount.cpp" />
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="CMyFrame.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="count.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterCount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CMyFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+    <None Include="..\readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7024c8c0-934d-4555-bd20-a1f0fc9db983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{ed1289cd-899e-4ebf-867a-55a92ed05467}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\icons\iconLarge16c.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\icons\iconLargeBW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\icons\iconLargeTrue.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\icons\iconSmall16c.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\icons\iconSmallBW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
