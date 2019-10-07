@@ -1,13 +1,15 @@
 #include "stdafx.h"
 
+#define ETL_FRAME_CLASS_NAME CMyFrame
+#include "template/etlframe.h"
+#include "CMyFrame.h"
+
 #include "count.h"
 #include "registry.h"
 #include "CharacterCount.h"
 
-#define EE_EXTERN_ONLY
-#define ETL_FRAME_CLASS_NAME CMyFrame
-#include "template/etlframe.h"
-#include "CMyFrame.h"
+
+_ETL_IMPLEMENT
 
 namespace charCount {
 

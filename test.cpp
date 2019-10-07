@@ -8,10 +8,10 @@
 #include "test.h"
 #ifdef _test
 
+#define EE_EXTERN_ONLY
 #define ETL_FRAME_CLASS_NAME CMyFrame
 #include "etlframe.h"
 #include "CMyFrame.h"
-_ETL_IMPLEMENT
 
 using namespace std::string_literals;
 
