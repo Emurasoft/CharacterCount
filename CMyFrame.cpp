@@ -6,10 +6,10 @@
 #include "test.h"
 #ifndef _test
 
+#define EE_EXTERN_ONLY
 #define ETL_FRAME_CLASS_NAME CMyFrame
-#include "etlframe.h"
+#include "template/etlframe.h"
 #include "CMyFrame.h"
-_ETL_IMPLEMENT
 
 // Button is pressed on plug-ins toolbar.
 void CMyFrame::OnCommand( HWND hwnd )

@@ -75,22 +75,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-32bit-v1</TargetName>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-64bit-v1</TargetName>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
@@ -104,7 +104,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +119,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,7 +137,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)"  "..\bin\CharacterCount1"</Command>
@@ -166,7 +166,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
@@ -202,7 +202,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\readme.md" />
-    <None Include="exports.def" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
