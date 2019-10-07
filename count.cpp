@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #define EE_EXTERN_ONLY
 #define ETL_FRAME_CLASS_NAME CMyFrame
-#include "etlframe.h"
+#include "template/etlframe.h"
 #include "CMyFrame.h"
 
 #include "settings.h"
