@@ -1,9 +1,4 @@
 /*
-Copyright (c) 2018 Emurasoft Inc.
-Licensed under the MIT license. See LICENSE for details.
-*/
-
-/*
 Unit test:
 	#define _test in test.h
 
