@@ -1,8 +1,3 @@
-/*
-Copyright (c) 2018 Emurasoft Inc.
-Licensed under the MIT license. See LICENSE for details.
-*/
-
 #include "stdafx.h"
 #define EE_EXTERN_ONLY
 #define ETL_FRAME_CLASS_NAME CMyFrame
