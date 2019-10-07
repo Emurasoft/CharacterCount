@@ -68,6 +68,17 @@ void _ETLDeleteFrame( CETLFrameX* pFrame );
 BOOL IsFileExist( LPCTSTR pszPathName );
 void GetModuleFilePath( LPCTSTR szFile, LPTSTR szPath );
 HINSTANCE GetInstancePath( LPCTSTR szPath, bool bResourceOnly );
+extern HINSTANCE EEGetLocaleInstanceHandle();
+extern HINSTANCE EEGetInstanceHandle();
+extern BOOL IsFileExist(LPCTSTR pszPathName);
+extern BOOL GetModuleFile(LPTSTR szFileName);
+extern void GetModuleFilePath(LPCTSTR szFile, LPTSTR szPath);
+extern HINSTANCE GetInstancePath(LPCTSTR szPath);
+extern WORD EEGetCmdID();
+extern CETLFrameX* GetFrameFromFrame(HWND hwndFrame);
+extern CETLFrameX* GetFrame(HWND hwnd);
+extern CETLFrameX* GetFrameFromDlg(HWND hwnd);
+extern CETLFrameX* GetFrameFromView(HWND hwndView);
 
 #define _ETL_IMPLEMENT CETLFrameX* _ETLCreateFrame() { CETLFrameX* pFrame = new ETL_FRAME_CLASS_NAME; return pFrame; } void _ETLDeleteFrame( CETLFrameX* pFrame ) { delete static_cast<ETL_FRAME_CLASS_NAME*>(pFrame); }
 
@@ -623,17 +634,6 @@ public:
 };
 
 
-extern HINSTANCE EEGetLocaleInstanceHandle();
-extern HINSTANCE EEGetInstanceHandle();
-extern BOOL IsFileExist( LPCTSTR pszPathName );
-extern BOOL GetModuleFile( LPTSTR szFileName );
-extern void GetModuleFilePath( LPCTSTR szFile, LPTSTR szPath );
-extern HINSTANCE GetInstancePath( LPCTSTR szPath );
-extern WORD EEGetCmdID();
-extern CETLFrameX* GetFrameFromFrame( HWND hwndFrame );
-extern CETLFrameX* GetFrame( HWND hwnd );
-extern CETLFrameX* GetFrameFromDlg( HWND hwnd );
-extern CETLFrameX* GetFrameFromView( HWND hwndView );
 
 #ifndef EE_EXTERN_ONLY
 HINSTANCE EEGetLocaleInstanceHandle()
