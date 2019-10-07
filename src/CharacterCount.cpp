@@ -62,9 +62,9 @@ std::tuple<int,int> rowAndCol( int i, bool skip23 )
 		col = 0;
 
 		if (i >= count::selStart)
-			row++;
+			++row;
 		if (i >= count::width)
-			row++;
+			++row;
 	}
 
 	return std::tuple<int,int>(row, col);
@@ -101,7 +101,7 @@ std::wstring withCommas(std::wstring number)
 {
 	size_t length = number.length();
 
-	for (size_t i = 0; i < (length-1) / 3; i++)
+	for (size_t i = 0; i < (length-1) / 3; ++i)
 		number.insert(length - (i+1) * 3, L",");
 	
 	return number;
@@ -187,7 +187,7 @@ std::wstring initDialog( HWND hwnd, HWND editor,
 	// Draw text
 	std::wstring textOutput;
 
-	for( int i = 0; i < count::countsSize; i++ ) {
+	for( int i = 0; i < count::countsSize; ++i ) {
 		if( selection || (i != count::selStart && i != count::selEnd) ) {
 
 			WCHAR label[25];

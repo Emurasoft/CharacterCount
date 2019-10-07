@@ -1,5 +1,4 @@
 # CharacterCount
-Version 1
 
 Copyright © Emurasoft Inc. 2018<br>
 Licensed under the MIT license. See LICENSE for details.

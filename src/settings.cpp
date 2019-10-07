@@ -42,9 +42,9 @@ RECT settingsRightColumn( int cy, int i )
 void updateComboBoxes( std::array<HWND,settingsSize> comboBoxes,
 					   const std::array<unsigned char,settingsSize>& settings )
 {
-	for( int row = 0; row < settingsSize; row++ ) {
+	for( int row = 0; row < settingsSize; ++row ) {
 		int selectIndex = -1;
-		for( UINT i = 0; i < menus[row].size(); i++ ) {
+		for( UINT i = 0; i < menus[row].size(); ++i ) {
 			if( menus[row][i] == settings[row] ) {
 				selectIndex = i;
 				break;
@@ -126,7 +126,7 @@ std::array<HWND,settingsSize> initSettings( HWND hwnd,
 	// Draw text and controls
 	std::array<HWND,settingsSize> comboBoxes;
 
-	for( int i = 0; i < settingsSize; i++ ) {
+	for( int i = 0; i < settingsSize; ++i ) {
 		WCHAR label[100];
 		VERIFY(LoadString( localeInstanceHandle, IDS_LABEL200 + i, label, 100 ));
 		RECT lCol = settingsLeftColumn( cy, i );
@@ -151,7 +151,7 @@ storeSelSettings( HWND hwnd,
 {
 	std::array<unsigned char, settingsSize> newSettings;
 
-	for( int i = 0; i < settingsSize; i++ ) {
+	for( int i = 0; i < settingsSize; ++i ) {
 		int selectedIndex = (int)SendMessage( comboBoxes[i], CB_GETCURSEL, NULL, NULL );
 		newSettings[i] = menus[i][selectedIndex];
 	}
