@@ -207,13 +207,13 @@ namespace test {
 
 		std::vector<std::vector<std::tuple<std::array<unsigned char,settings::settingsSize>, std::wstring>>>
 			returnVec(settingsAndCounts.size());
-		for( int fileI = 0; fileI < settingsAndCounts.size(); fileI++ ) {
+		for( int fileI = 0; fileI < settingsAndCounts.size(); ++fileI ) {
 
 			returnVec[fileI] =
 				std::vector<std::tuple<std::array<unsigned char, settings::settingsSize>, std::wstring>>(
 					settingsAndCounts[fileI].size());
 
-			for (int settingI = 0; settingI < settingsAndCounts[fileI].size(); settingI++) {
+			for (int settingI = 0; settingI < settingsAndCounts[fileI].size(); ++settingI) {
 
 				returnVec[fileI][settingI]
 					= std::make_tuple(
@@ -253,7 +253,7 @@ namespace test {
 			if ( charcount.textOutput != std::get<1>( settingsAndOutput ) )
 				errors += L"\t\tSetting "s + std::to_wstring( i )
 						+ L" resulted in incorrect values.\n"s;
-			i++;
+			++i;
 		}
 
 		return errors;
