@@ -83,8 +83,6 @@ Notes:
 There are several ways to ask a question about CharacterCount or to submit feedback:
 
 * Post an issue in the GitHub repository: https://github.com/Emurasoft/CharacterCount
-* Contact the main developer, Makoto, by email: makoto@emurasoft.com
-* Make a post on the plug-ins forum: https://www.emeditor.com/forums/forum/plugins/
 * Use the contact form on emeditor.com: https://www.emeditor.com/support/#contact
 
 # Acknowledgement
