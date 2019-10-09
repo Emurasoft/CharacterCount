@@ -21,12 +21,12 @@ namespace count {
 
 	inline unsigned surrogateToScaler(wchar_t* c)
 	{
-		if (!isLowSurrogate(c[1])) {
-			return static_cast<unsigned>(*c);
+		if (isLowSurrogate(c[1])) {
+			const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
+			return (c[0] << 10) + c[1] + offset;
 		}
 
-		const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
-		return (c[0] << 10) + c[1] + offset;
+		return static_cast<unsigned>(*c);
 	}
 
 	inline bool baseCharacter(wchar_t* c) {
@@ -66,22 +66,20 @@ namespace count {
 
 	// Macros used in countText()
 	// Exclude characters on setting
-#define exclude(x) && ( defaultSettings || ( x ) )
 #define ifNotSetting(key,value,match) ( settings[settings::key] == settings::value || !(match) )
 
 // Include characters on setting
-#define include(x) || !defaultSettings && ( x )
 #define ifSetting(key,value,match) ( settings[settings::key] == settings::value && (match) )
 
+	// character to width cache
+	std::array<int, 0x30000> widthTable{ {0} };
+
 // Parses through text and increments count.
-// Although parameter defaultSettings is supposed to optimize speed, it doesn't seem to make a difference.
 	void countText(wchar_t* text,
 		long textSize,
 		std::array<long, countsSize>* count,
 		HWND editor,
-		std::array<int, 0x30000>* widthTable,
-		const std::array<unsigned char, settings::settingsSize>& settings,
-		bool defaultSettings = false)
+		const std::array<unsigned char, settings::settingsSize>& settings)
 	{
 		wchar_t* end = text + textSize - 1;
 
@@ -93,12 +91,12 @@ namespace count {
 
 				// Halfwidth/fullwidth
 				if (*pos < 0x30000) {
-					if (widthTable->at(*pos) < 1)
-						widthTable->at(*pos) = getWidth(editor, pos, text);
+					if (widthTable.at(*pos) < 1)
+						widthTable.at(*pos) = getWidth(editor, pos, text);
 
-					if (widthTable->at(*pos) == 1)
+					if (widthTable.at(*pos) == 1)
 						++(*count)[halfwidth];
-					else if (widthTable->at(*pos) == 2)
+					else if (widthTable.at(*pos) == 2)
 						++(*count)[fullwidth];
 				}
 				else {
@@ -147,11 +145,11 @@ namespace count {
 
 			// Hiragana
 			else if (0x3040 <= *pos && *pos <= 0x309F
-				exclude(
+				&& (
 					ifNotSetting(voiced, hiragana, 0x309b <= *pos && *pos <= 0x309c)
 					&& ifNotSetting(hiraIteration, hirakata, 0x309d <= *pos && *pos <= 0x309e)
 				)
-				include(
+				|| (
 					ifSetting(stop, hiragana, 0x3001 <= *pos && *pos <= 0x3002)
 					|| ifSetting(halfStop, hiragana, *pos == 0xff61 || *pos == 0xff64)
 					|| ifSetting(halfVoiced, hiragana, 0xff9e <= *pos && *pos <= 0xff9f)
@@ -164,12 +162,12 @@ namespace count {
 
 			// Katakana
 			else if (0x30A0 <= *pos && *pos <= 0x30FF
-				exclude(
+				&& (
 					ifNotSetting(prolonged, katakana, *pos == 0x30fc)
 					&& ifNotSetting(hiraIteration, hirakata, 0x30fd <= *pos && *pos <= 0x30fe)
 					&& ifNotSetting(middle, katahalf, *pos == 0x30fb)
 				)
-				include(
+				|| (
 					ifSetting(stop, katakana, 0x3001 <= *pos && *pos <= 0x3002)
 					|| ifSetting(halfStop, katakana, *pos == 0xff61 || *pos == 0xff64)
 					|| ifSetting(halfVoiced, katakana, 0xff9e <= *pos && *pos <= 0xff9f)
@@ -180,7 +178,7 @@ namespace count {
 
 			// CJK unified ideograph range
 			else if (0x4E00 <= *pos && *pos <= 0x9FFF
-				include(
+				|| (
 					ifSetting(cjkIteration, cjk, *pos == 0x3005)
 					|| ifSetting(closing, cjk, *pos == 0x3006)
 					|| ifSetting(numberZero, cjk, *pos == 0x3007)
@@ -190,7 +188,7 @@ namespace count {
 
 			// Halfwidth katakana
 			else if (0xFF61 <= *pos && *pos <= 0xFF9F
-				exclude(
+				&& (
 					ifNotSetting(halfStop, halfkana, *pos == 0xff61 || *pos == 0xff64)
 					&& ifNotSetting(halfVoiced, halfkana, 0xff9e <= *pos && *pos <= 0xff9f)
 					&& ifNotSetting(halfProlonged, halfkana, *pos == 0xff70)
@@ -220,11 +218,6 @@ namespace count {
 		// Main table to keep track of counts
 		std::array<long, countsSize> counts{ {0} };
 
-		// Lookup table for width
-		std::array<int, 0x30000> widthTable{ {0} };
-
-		bool defaultSettings = settings == settings::defaultSettings;
-
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
@@ -242,7 +235,7 @@ namespace count {
 				lineInfo.cch = textSize;
 				Editor_GetLineW(editor, &lineInfo, text);
 
-				countText(text, textSize, &counts, editor, &widthTable, settings, defaultSettings);
+				countText(text, textSize, &counts, editor, settings);
 
 				if ((i & 0xffff) == 0) {
 					std::wstring progressText
@@ -264,7 +257,7 @@ namespace count {
 			VERIFY(text);
 			Editor_GetSelTextW(editor, textSize, text);
 
-			countText(text, textSize, &counts, editor, &widthTable, settings, defaultSettings);
+			countText(text, textSize, &counts, editor, settings);
 			counts[selStart] = (int)start.y + 1;
 			counts[selEnd] = (int)end.y + 1;
 			delete[] text;

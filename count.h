@@ -29,9 +29,7 @@ namespace count {
 		long textSize,
 		std::array<long, countsSize>* count,
 		HWND editor,
-		std::array<int, 0x30000>* widthTable,
-		const std::array<unsigned char, settings::settingsSize>& settings,
-		bool defaultSettings);
+		const std::array<unsigned char, settings::settingsSize>& settings);
 
 	std::array<long, countsSize> count(
 		bool* selection,
