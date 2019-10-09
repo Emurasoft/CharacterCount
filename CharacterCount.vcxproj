@@ -109,8 +109,6 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>googletest/googletest/build/lib/Debug/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>googletest/googletest/build/lib/Debug/gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,8 +124,6 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>googletest/googletest/build/lib/Debug/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>googletest/googletest/build/lib/Debug/gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
