@@ -77,22 +77,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>googletest/googletest/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>googletest/googletest/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-32bit-v1</TargetName>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>googletest/googletest/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-64bit-v1</TargetName>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>googletest/googletest/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -180,6 +184,7 @@
     <ClInclude Include="count.h" />
     <ClInclude Include="CharacterCount.h" />
     <ClInclude Include="CMyFrame.h" />
+    <ClInclude Include="count_test.h" />
     <ClInclude Include="registry.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="settings.h" />
