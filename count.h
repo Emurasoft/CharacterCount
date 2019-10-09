@@ -2,9 +2,7 @@
 #include "settings.h"
 
 namespace count {
-
-	enum
-	{
+	enum {
 		chars,
 		selStart,
 		selEnd,
@@ -27,8 +25,8 @@ namespace count {
 		countsSize
 	};
 
-	std::array<long,countsSize> count(
-			bool* selection,
-			HWND editor,
-			const std::array<unsigned char,settings::settingsSize>& settings );
+	std::array<long, countsSize> count(
+		bool* selection,
+		HWND editor,
+		const std::array<unsigned char, settings::settingsSize>& settings);
 }

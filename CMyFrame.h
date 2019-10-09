@@ -1,8 +1,7 @@
 #pragma once
 #include "resource.h"
 
-class CMyFrame : public CETLFrame<CMyFrame>
-{
+class CMyFrame : public CETLFrame<CMyFrame> {
 public:
 	enum {
 		_USE_LOC_DLL = FALSE,
@@ -27,33 +26,40 @@ public:
 		_SUPPORT_EE_STD = 0
 	};
 
-	void OnCommand( HWND hwnd );
+	void OnCommand(HWND hwnd);
 
-	void OnEvents(HWND /*hwnd*/, UINT /*nEvent*/, LPARAM /*lParam*/)
-	{}
+	void OnEvents(HWND, UINT, LPARAM) {
+	}
 
-	BOOL QueryStatus(HWND /*hwnd*/, LPBOOL pbChecked)
-	{*pbChecked = FALSE; return TRUE;}
+	BOOL QueryStatus(HWND, LPBOOL pbChecked) {
+		*pbChecked = FALSE; return TRUE;
+	}
 
-	BOOL DisableAutoComplete(HWND /*hwnd*/)
-	{return FALSE;}
+	BOOL DisableAutoComplete(HWND) {
+		return FALSE;
+	}
 
-	BOOL UseDroppedFiles(HWND /*hwnd*/)
-	{return FALSE;}
+	BOOL UseDroppedFiles(HWND) {
+		return FALSE;
+	}
 
-	BOOL QueryUninstall( HWND /*hwnd*/ )
-	{return TRUE;};
+	BOOL QueryUninstall(HWND) {
+		return TRUE;
+	};
 
-	BOOL SetUninstall( HWND /*hwnd*/, LPTSTR /*command*/, LPTSTR /*param*/ );
+	BOOL SetUninstall(HWND, LPTSTR, LPTSTR);
 
-	BOOL QueryProperties( HWND /*hwnd*/ )
-	{return TRUE;}
+	BOOL QueryProperties(HWND) {
+		return TRUE;
+	}
 
-	BOOL SetProperties( HWND hwnd );
+	BOOL SetProperties(HWND hwnd);
 
-	BOOL PreTranslateMessage(HWND /*hwnd*/, MSG* /*pMsg*/)
-	{return FALSE;}
+	BOOL PreTranslateMessage(HWND, MSG*) {
+		return FALSE;
+	}
 
-	LRESULT UserMessage(HWND /*hwnd*/, WPARAM /*wParam*/, LPARAM /*lParam*/)
-	{return NULL;}
+	LRESULT UserMessage(HWND, WPARAM, LPARAM) {
+		return NULL;
+	}
 };
