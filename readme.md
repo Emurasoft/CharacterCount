@@ -15,4 +15,5 @@ mkdir build
 cd build
 cmake ..
 msbuild -m -p:Configuration=Debug,Platform=x64 gtest.sln
+# Build and run test.vcxproj
 ```
