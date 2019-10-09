@@ -21,6 +21,10 @@ namespace count {
 
 	inline unsigned surrogateToScaler(wchar_t* c)
 	{
+		if (!isLowSurrogate(c[1])) {
+			return static_cast<unsigned>(*c);
+		}
+
 		const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
 		return (c[0] << 10) + c[1] + offset;
 	}
@@ -52,13 +56,12 @@ namespace count {
 	// Get width of character at c, taking into account surrogate pairs and combining characters.
 	inline int getWidth(HWND editor, wchar_t* c, wchar_t* begin)
 	{
-		if (isHighSurrogate(c[0]) && isLowSurrogate(c[1]))
-			return Editor_IsCharHalfOrFull(editor, surrogateToScaler(c));
-		else if (c != begin
-			&& isHighSurrogate(c[-1]) && isLowSurrogate(c[0]))
+		// wchar at c is a trailing surrogate
+		if (c != begin && isHighSurrogate(c[-1]) && isLowSurrogate(c[0])) {
 			return 0;
-		else
-			return Editor_IsCharHalfOrFull(editor, static_cast<unsigned>(*c));
+		}
+
+		return Editor_IsCharHalfOrFull(editor, surrogateToScaler(c));
 	}
 
 	// Macros used in countText()

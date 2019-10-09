@@ -120,81 +120,81 @@ namespace test {
 			〇	= fullwidth
 			*/
 			{
-				// 00. default
-				{settings::defaultSettings,
-					{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5}}},
+			// 00. default
+			{settings::defaultSettings,
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5}}},
 
-					// 01. eol counted as character
-					{{{one,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-					hirakata,neither,neither,neither}},
-						{{22,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5}}},
+			// 01. eol counted as character
+			{{{one,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{22,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5}}},
 
-						// 02. comma becomes hiragana
-						{{{zero,hiragana,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-						hirakata,neither,neither,neither}},
-							{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,5}}},
+			// 02. comma becomes hiragana
+			{{{zero,hiragana,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,5}}},
 
-							// 03. comma becomes katakana
-							{{{zero,katakana,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-							hirakata,neither,neither,neither}},
-								{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,5}}},
+			// 03. comma becomes katakana
+			{{{zero,katakana,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,5}}},
 
-								// 04. halfwidth stop is neither
-								{{{zero,neither,neither,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-								hirakata,neither,neither,neither}},
-									{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}}},
+			// 04. halfwidth stop is neither
+			{{{zero,neither,neither,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}}},
 
-									// 05. halfwidth stop is hiragana
-									{{{zero,neither,hiragana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-									hirakata,neither,neither,neither}},
-										{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4}}},
+			// 05. halfwidth stop is hiragana
+			{{{zero,neither,hiragana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4}}},
 
-										// 06. voiced sound mark is neither
-										{{{zero,neither,halfkana,neither,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-										hirakata,neither,neither,neither}},
-											{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,2,3,5}}},
+			// 06. voiced sound mark is neither
+			{{{zero,neither,halfkana,neither,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,2,3,5}}},
 
-											// 07. halfwidth voiced sound mark is katakana
-											{{{zero,neither,halfkana,hiragana,katakana,katakana,halfkana,halfkana,katahalf,neither,
-											hirakata,neither,neither,neither}},
-												{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,4}}},
+			// 07. halfwidth voiced sound mark is katakana
+			{{{zero,neither,halfkana,hiragana,katakana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,4}}},
 
-												// 08. prolonged sound mark is hiragana
-												{{{zero,neither,halfkana,hiragana,halfkana,hiragana,halfkana,halfkana,katahalf,neither,
-												hirakata,neither,neither,neither}},
-													{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,2,5}}},
+			// 08. prolonged sound mark is hiragana
+			{{{zero,neither,halfkana,hiragana,halfkana,hiragana,halfkana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,2,5}}},
 
-													// 09. halfwidth prolonged sound mark is hiragana
-													{{{zero,neither,halfkana,hiragana,halfkana,katakana,hiragana,halfkana,katahalf,neither,
-													hirakata,neither,neither,neither}},
-														{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4}}},
+			// 09. halfwidth prolonged sound mark is hiragana
+			{{{zero,neither,halfkana,hiragana,halfkana,katakana,hiragana,halfkana,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4}}},
 
-														// 10. halfwidth corner brackets is neither
-														{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,neither,katahalf,neither,
-														hirakata,neither,neither,neither}},
-															{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}}},
+			// 10. halfwidth corner brackets is neither
+			{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,neither,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}}},
 
-															// 11. katakana middle dot is neither
-															{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,neither,neither,
-															hirakata,neither,neither,neither}},
-																{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,2,5}}},
+			// 11. katakana middle dot is neither
+			{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,neither,neither,
+			hirakata,neither,neither,neither}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,2,5}}},
 
-																// 12. the three other options are all CJK
-																{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
-																hirakata,cjk,cjk,cjk}},
-																	{{21,2,2,0,0,1,34,8,13,1,1,1,3,4,3,3,5}}},
+			// 12. the three other options are all CJK
+			{{{zero,neither,halfkana,hiragana,halfkana,katakana,halfkana,halfkana,katahalf,neither,
+			hirakata,cjk,cjk,cjk}},
+				{{21,2,2,0,0,1,34,8,13,1,1,1,3,4,3,3,5}}},
 
-																	/*
-																	13. eol is 1 char, comma is hiragana, halfwidth full stop is katakana, voiced sound mark
-																	is neither, halfwidth voiced sound mark is hiragana, halfwidth corner brackets is neither
-																	-> (+1 char; +1 hiragana; -1 halfwidth katakana, +1 katakana; -1 hiragana; -1 halfwidth
-																		katakana, +1 hiragana; -1 halfwidth katakana)
-																	-> (+1 char, +1 hiragana, +1 katakana, -3 halfwidth katakana)
-																	*/
-																	{{{one,hiragana,katakana,neither,hiragana,katakana,halfkana,neither,katahalf,neither,
-																	hirakata,neither,neither,neither}},
-																		{{22,2,2,0,0,1,34,8,13,1,1,1,3,1,4,4,2}}}
-																	}
+			/*
+			13. eol is 1 char, comma is hiragana, halfwidth full stop is katakana, voiced sound mark
+			is neither, halfwidth voiced sound mark is hiragana, halfwidth corner brackets is neither
+			-> (+1 char; +1 hiragana; -1 halfwidth katakana, +1 katakana; -1 hiragana; -1 halfwidth
+				katakana, +1 hiragana; -1 halfwidth katakana)
+			-> (+1 char, +1 hiragana, +1 katakana, -3 halfwidth katakana)
+			*/
+			{{{one,hiragana,katakana,neither,hiragana,katakana,halfkana,neither,katahalf,neither,
+			hirakata,neither,neither,neither}},
+				{{22,2,2,0,0,1,34,8,13,1,1,1,3,1,4,4,2}}}
+			}
 		};
 
 		std::vector<std::vector<std::tuple<std::array<unsigned char, settings::settingsSize>, std::wstring>>>
@@ -224,7 +224,7 @@ namespace test {
 		GetModuleFileName(EEGetLocaleInstanceHandle(), dirChar, 300);
 		std::wstring docPath(dirChar);
 		return docPath.substr(0, docPath.find(L"build\\x64\\Debug"s))
-			+ L"src\\testDocument.txt"s;
+			+ L"testDocument.txt"s;
 	}
 
 	std::wstring testSettings(
