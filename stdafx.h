@@ -18,7 +18,7 @@
 #include <tuple>
 
 #ifdef _DEBUG
-#define VERIFY(f)          _ASSERTE(f)
+#define VERIFY(f) _ASSERTE(f)
 #else
-#define VERIFY(f)          ((void)(f))
+#define VERIFY(f) ((void)(f))
 #endif
