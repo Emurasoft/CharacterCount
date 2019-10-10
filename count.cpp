@@ -27,27 +27,25 @@ namespace count {
 	}
 
 	inline bool baseCharacter(wchar_t* c) {
-		return
-			*c < 0x0300
-			|| !(
+		return !(
 			(0xdc00 <= *c && *c <= 0xdfff)	// Trailing surrogate
-				|| 0x3099 == *c || *c == 0x309a	// Hiragana combination
-				|| 0x0e31 == *c					// Thai combination
-				|| (0x0e33 <= *c && *c <= 0x0e3a)	// Thai combination
-				|| (0x0e47 <= *c && *c <= 0x0e4e)	// Thai combination
-				|| (0x0300 <= *c && *c <= 0x036f)	// Combining diacritical marks
-				|| (0x1ab0 <= *c && *c <= 0x1aff)	// Combining diacritical marks extended
-				|| (0x1dc0 <= *c && *c <= 0x1dff)	// Combining diacritical marks supplement
-				|| (0x20d0 <= *c && *c <= 0x20ff)	// Combining diacritical marks for symbols
-				|| (0xfe20 <= *c && *c <= 0xfe2f)	// Combining half marks
-				|| *c == 0x200d					// ZERO WIDTH JOINER
-				|| *c == 0x200c					// ZERO WIDTH NON-JOINER
-				|| (0xfe00 <= *c && *c <= 0xfe0f)	// Variation selectors
-				|| (0xdb40 <= *c &&					// Variation selectors supplement block
-					0xdd00 <= c[1] && c[1] <= 0xddef)
-				|| (0x180b <= *c && *c <= 0x180d)	// Mongolian free variation selectors
-				|| *c == 0x3035						// VERTICAL KANA REPEAT MARK LOWER HALF
-				);
+			|| 0x3099 == *c || *c == 0x309a	// Hiragana combination
+			|| 0x0e31 == *c					// Thai combination
+			|| (0x0e33 <= *c && *c <= 0x0e3a)	// Thai combination
+			|| (0x0e47 <= *c && *c <= 0x0e4e)	// Thai combination
+			|| (0x0300 <= *c && *c <= 0x036f)	// Combining diacritical marks
+			|| (0x1ab0 <= *c && *c <= 0x1aff)	// Combining diacritical marks extended
+			|| (0x1dc0 <= *c && *c <= 0x1dff)	// Combining diacritical marks supplement
+			|| (0x20d0 <= *c && *c <= 0x20ff)	// Combining diacritical marks for symbols
+			|| (0xfe20 <= *c && *c <= 0xfe2f)	// Combining half marks
+			|| *c == 0x200d					// ZERO WIDTH JOINER
+			|| *c == 0x200c					// ZERO WIDTH NON-JOINER
+			|| (0xfe00 <= *c && *c <= 0xfe0f)	// Variation selectors
+			|| (0xdb40 <= *c &&					// Variation selectors supplement block
+				0xdd00 <= c[1] && c[1] <= 0xddef)
+			|| (0x180b <= *c && *c <= 0x180d)	// Mongolian free variation selectors
+			|| *c == 0x3035						// VERTICAL KANA REPEAT MARK LOWER HALF
+		);
 	}
 
 	// Get width of character at c, taking into account surrogate pairs and combining characters.
