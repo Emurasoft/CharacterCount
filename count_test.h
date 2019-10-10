@@ -36,25 +36,169 @@ std::string countsString(const std::array<long, count::countsSize>& counts) {
 }
 
 TEST(count, countText) {
-	std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
-	std::array<long, count::countsSize> result{};
+	std::vector<std::tuple<std::array<unsigned char, settings::settingsSize>, std::array<long, count::countsSize>>> tests{
+		{ // 00. default
+			settings::defaultSettings,
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
+		},
 
-	count::countText(const_cast<wchar_t*>(text.c_str()), text.size() + 1, &result, getWidth, settings::defaultSettings);
+		
+		{ // 01. eol counted as character
+			{
+				settings::one,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,settings::katakana,
+				settings::halfkana,settings::halfkana,settings::katahalf,settings::neither, settings::hirakata,
+				settings::neither,settings::neither,settings::neither,
+			},
+			{22,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
+		},
 
-	result[count::logicalLines] = 2;
-	result[count::viewLines] = 2;
+		// 02. comma becomes hiragana
+		{
+			{
+				settings::zero,settings::hiragana,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+				settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,5},
+		},
 
-	result[count::chars] -= result[count::controlCharacters] - result[count::tabCharacters];
-	result[count::halfwidth] -= result[count::controlCharacters] - result[count::tabCharacters];
+		// 03. comma becomes settings::katakana
+		{
+			{
+				settings::zero,settings::katakana,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+				settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,5},
+		},
 
-	result[count::width] = result[count::halfwidth] + 2 * result[count::fullwidth];
+		// 04. halfwidth stop is settings::neither
+		{
+			{
+				settings::zero,settings::neither,settings::neither,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4},
+		},
 
-	if (settings::defaultSettings[settings::eol] == settings::one) {
-		result[count::chars] += result[count::logicalLines] - 1;
+		// 05. halfwidth stop is settings::hiragana
+		{
+			{
+				settings::zero,settings::neither,settings::hiragana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4},
+		},
+
+		// 06. voiced sound mark is settings::neither
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::neither,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,2,3,5},
+		},
+
+		// 07. halfwidth voiced sound mark is settings::katakana
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::katakana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,4},
+		},
+
+		// 08. prolonged sound mark is settings::hiragana
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::hiragana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,2,5},
+		},
+
+		// 09. halfwidth prolonged sound mark is settings::hiragana
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::hiragana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4},
+		},
+
+		// 10. halfwidth corner brackets is settings::neither
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::neither,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}},
+		},
+
+		// 11. settings::katakana middle dot is settings::neither
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::neither,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,2,5},
+		},
+
+		// 12. the three other options are all settings::cjk
+		{
+			{
+				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
+				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
+		settings::hirakata,settings::cjk,settings::cjk,settings::cjk,
+			},
+			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,4,3,3,5},
+		},
+
+		/*
+		13. eol is 1 char, comma is settings::hiragana, halfwidth full stop is settings::katakana, voiced sound mark
+		is settings::neither, halfwidth voiced sound mark is settings::hiragana, halfwidth corner brackets is settings::neither
+		-> (+1 char; +1 settings::hiragana; -1 halfwidth settings::katakana, +1 settings::katakana; -1 settings::hiragana; -1 halfwidth
+			settings::katakana, +1 settings::hiragana; -1 halfwidth settings::katakana)
+		-> (+1 char, +1 settings::hiragana, +1 settings::katakana, -3 halfwidth settings::katakana)
+		*/
+		{
+			{
+				settings::one,settings::hiragana,settings::katakana,settings::neither,settings::hiragana,
+				settings::katakana,settings::halfkana,settings::neither,settings::katahalf,settings::neither,
+		settings::hirakata,settings::neither,settings::neither,settings::neither,
+			},
+			{22,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,4,2},
+		},
+	};
+
+	for (size_t i = 0; i < tests.size(); ++i) {
+		std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
+		std::array<long, count::countsSize> result{};
+
+		count::countText(const_cast<wchar_t*>(text.c_str()), text.size() + 1, &result, getWidth, std::get<0>(tests[i]));
+
+		result[count::logicalLines] = 2;
+		result[count::viewLines] = 2;
+
+		result[count::chars] -= result[count::controlCharacters] - result[count::tabCharacters];
+		result[count::halfwidth] -= result[count::controlCharacters] - result[count::tabCharacters];
+
+		result[count::width] = result[count::halfwidth] + 2 * result[count::fullwidth];
+
+		if (std::get<0>(tests[i])[settings::eol] == settings::one) {
+			result[count::chars] += result[count::logicalLines] - 1;
+		}
+
+		EXPECT_EQ(result, std::get<1>(tests[i])) << "i=" << i;
 	}
-
-	std::array<long, count::countsSize> expected{ {21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5} };
-	ASSERT_EQ(result, expected);
 }
 
 }

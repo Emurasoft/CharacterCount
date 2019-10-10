@@ -64,8 +64,9 @@ inline int charWidth(wchar_t* c, wchar_t* begin, std::function<int(unsigned int 
 // Include characters on setting
 #define ifSetting(key,value,match) ( settings[settings::key] == settings::value && (match) )
 
-	// character to width cache (0 is undefined)
-std::array<int, 0x30000> widthTable{ {0} };
+// character to width cache (0 is undefined)
+const size_t widthTableSize = 0x30000;
+std::array<int, widthTableSize> widthTable{ {0} };
 
 // Parses through text and increments count.
 void countText(wchar_t* text,
@@ -82,14 +83,14 @@ void countText(wchar_t* text,
 			++(*count)[chars];
 
 			// Halfwidth/fullwidth
-			if (*pos < 0x30000) {
-				if (widthTable.at(*pos) < 1) {
-					widthTable.at(*pos) = charWidth(pos, text, getWidth);
+			if (*pos < widthTableSize) {
+				if (widthTable[*pos] == 0) {
+					widthTable[*pos] = charWidth(pos, text, getWidth);
 				}
 
-				if (widthTable.at(*pos) == 1) {
+				if (widthTable[*pos] == 1) {
 					++(*count)[halfwidth];
-				} else if (widthTable.at(*pos) == 2) {
+				} else if (widthTable[*pos] == 2) {
 					++(*count)[fullwidth];
 				}
 			} else {
