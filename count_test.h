@@ -43,7 +43,7 @@ TEST(count, countText) {
 		},
 
 		
-		{ // 01. eol counted as character
+		{ // 1. eol counted as character
 			{
 				settings::one,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,settings::katakana,
 				settings::halfkana,settings::halfkana,settings::katahalf,settings::neither, settings::hirakata,
@@ -51,9 +51,7 @@ TEST(count, countText) {
 			},
 			{22,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
 		},
-
-		// 02. comma becomes hiragana
-		{
+		{ // 2. comma becomes hiragana
 			{
 				settings::zero,settings::hiragana,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -61,9 +59,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,5},
 		},
-
-		// 03. comma becomes settings::katakana
-		{
+		{ // 3. comma becomes katakana
 			{
 				settings::zero,settings::katakana,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -71,9 +67,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,5},
 		},
-
-		// 04. halfwidth stop is settings::neither
-		{
+		{ // 4. halfwidth stop is neither
 			{
 				settings::zero,settings::neither,settings::neither,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -81,9 +75,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4},
 		},
-
-		// 05. halfwidth stop is settings::hiragana
-		{
+		{ // 5. halfwidth stop is hiragana
 			{
 				settings::zero,settings::neither,settings::hiragana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -91,9 +83,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4},
 		},
-
-		// 06. voiced sound mark is settings::neither
-		{
+		{ // 6. voiced sound mark is neither
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::neither,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -101,9 +91,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,2,3,5},
 		},
-
-		// 07. halfwidth voiced sound mark is settings::katakana
-		{
+		{ // 7. halfwidth voiced sound mark is katakana
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::katakana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -111,9 +99,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,4,4},
 		},
-
-		// 08. prolonged sound mark is settings::hiragana
-		{
+		{ // 8. prolonged sound mark is hiragana
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::hiragana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -121,9 +107,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,2,5},
 		},
-
-		// 09. halfwidth prolonged sound mark is settings::hiragana
-		{
+		{ // 9. halfwidth prolonged sound mark is hiragana
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::hiragana,settings::halfkana,settings::katahalf,settings::neither,
@@ -131,9 +115,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,4,3,4},
 		},
-
-		// 10. halfwidth corner brackets is settings::neither
-		{
+		{ // 10. halfwidth corner brackets is neither
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::neither,settings::katahalf,settings::neither,
@@ -141,9 +123,7 @@ TEST(count, countText) {
 			},
 			{{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,4}},
 		},
-
-		// 11. settings::katakana middle dot is settings::neither
-		{
+		{ // 11. settings::katakana middle dot is neither
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::neither,settings::neither,
@@ -151,9 +131,7 @@ TEST(count, countText) {
 			},
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,2,5},
 		},
-
-		// 12. the three other options are all settings::cjk
-		{
+		{ // 12. the three other options are all cjk
 			{
 				settings::zero,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,
 				settings::katakana,settings::halfkana,settings::halfkana,settings::katahalf,settings::neither,
@@ -163,11 +141,11 @@ TEST(count, countText) {
 		},
 
 		/*
-		13. eol is 1 char, comma is settings::hiragana, halfwidth full stop is settings::katakana, voiced sound mark
-		is settings::neither, halfwidth voiced sound mark is settings::hiragana, halfwidth corner brackets is settings::neither
-		-> (+1 char; +1 settings::hiragana; -1 halfwidth settings::katakana, +1 settings::katakana; -1 settings::hiragana; -1 halfwidth
-			settings::katakana, +1 settings::hiragana; -1 halfwidth settings::katakana)
-		-> (+1 char, +1 settings::hiragana, +1 settings::katakana, -3 halfwidth settings::katakana)
+		13. eol is 1 char, comma is hiragana, halfwidth full stop is katakana, voiced sound mark
+		is neither, halfwidth voiced sound mark is hiragana, halfwidth corner brackets is neither
+		-> (+1 char; +1 hiragana; -1 halfwidth katakana, +1 katakana; -1 hiragana; -1 halfwidth
+			katakana, +1 hiragana; -1 halfwidth katakana)
+		-> (+1 char, +1 hiragana, +1 katakana, -3 halfwidth katakana)
 		*/
 		{
 			{
