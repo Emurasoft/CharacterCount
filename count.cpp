@@ -9,18 +9,15 @@
 
 namespace count {
 
-	inline bool isHighSurrogate(wchar_t c)
-	{
+	inline bool isHighSurrogate(wchar_t c) {
 		return c >= 0xd800 && c <= 0xdbff;
 	}
 
-	inline bool isLowSurrogate(wchar_t c)
-	{
+	inline bool isLowSurrogate(wchar_t c) {
 		return c >= 0xdc00 && c <= 0xdfff;
 	}
 
-	inline unsigned surrogateToScaler(wchar_t* c)
-	{
+	inline unsigned surrogateToScaler(wchar_t* c) {
 		if (isLowSurrogate(c[1])) {
 			const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
 			return (c[0] << 10) + c[1] + offset;
@@ -54,8 +51,7 @@ namespace count {
 	}
 
 	// Get width of character at c, taking into account surrogate pairs and combining characters.
-	inline int getWidth(HWND editor, wchar_t* c, wchar_t* begin)
-	{
+	inline int getWidth(HWND editor, wchar_t* c, wchar_t* begin) {
 		// wchar at c is a trailing surrogate
 		if (c != begin && isHighSurrogate(c[-1]) && isLowSurrogate(c[0])) {
 			return 0;
@@ -65,22 +61,21 @@ namespace count {
 	}
 
 	// Macros used in countText()
-	// Exclude characters on setting
+// Exclude characters on setting
 #define ifNotSetting(key,value,match) ( settings[settings::key] == settings::value || !(match) )
 
 // Include characters on setting
 #define ifSetting(key,value,match) ( settings[settings::key] == settings::value && (match) )
 
-	// character to width cache
+	// character to width cache (0 is undefined)
 	std::array<int, 0x30000> widthTable{ {0} };
 
-// Parses through text and increments count.
+	// Parses through text and increments count.
 	void countText(wchar_t* text,
 		long textSize,
 		std::array<long, countsSize>* count,
 		HWND editor,
-		const std::array<unsigned char, settings::settingsSize>& settings)
-	{
+		const std::array<unsigned char, settings::settingsSize>& settings) {
 		wchar_t* end = text + textSize - 1;
 
 		for (wchar_t* pos = text; pos < end; ++pos) {
@@ -98,8 +93,7 @@ namespace count {
 						++(*count)[halfwidth];
 					else if (widthTable.at(*pos) == 2)
 						++(*count)[fullwidth];
-				}
-				else {
+				} else {
 					switch (getWidth(editor, pos, text)) {
 					case 1:
 						++(*count)[halfwidth];
@@ -117,20 +111,17 @@ namespace count {
 
 				if (*pos == 0x9) { // Tab character
 					++(*count)[tabCharacters];
-				}
-				else if (*pos == 0xd) {
+				} else if (*pos == 0xd) {
 					if (*(pos + 1) == 0xa) { // CR+LF
 						++(*count)[crlf];
 						++pos; // increment counts for LF and skip last loop
 						++(*count)[chars];
 						++(*count)[controlCharacters];
 						++(*count)[halfwidth];
-					}
-					else { // Carriage return only
+					} else { // Carriage return only
 						++(*count)[cr];
 					}
-				}
-				else if (*pos == 0xa) { // Line feed only
+				} else if (*pos == 0xa) { // Line feed only
 					++(*count)[lf];
 				}
 			}
@@ -148,7 +139,7 @@ namespace count {
 				&& (
 					ifNotSetting(voiced, hiragana, 0x309b <= *pos && *pos <= 0x309c)
 					&& ifNotSetting(hiraIteration, hirakata, 0x309d <= *pos && *pos <= 0x309e)
-				)
+					)
 				|| (
 					ifSetting(stop, hiragana, 0x3001 <= *pos && *pos <= 0x3002)
 					|| ifSetting(halfStop, hiragana, *pos == 0xff61 || *pos == 0xff64)
@@ -156,7 +147,7 @@ namespace count {
 					|| ifSetting(prolonged, hiragana, *pos == 0x30fc)
 					|| ifSetting(halfProlonged, hiragana, *pos == 0xff70)
 					|| ifSetting(repeat, hiragana, 0x3031 <= *pos && *pos <= 0x3035)
-				)
+					)
 				)
 				++(*count)[hiragana];
 
@@ -166,13 +157,13 @@ namespace count {
 					ifNotSetting(prolonged, katakana, *pos == 0x30fc)
 					&& ifNotSetting(hiraIteration, hirakata, 0x30fd <= *pos && *pos <= 0x30fe)
 					&& ifNotSetting(middle, katahalf, *pos == 0x30fb)
-				)
+					)
 				|| (
 					ifSetting(stop, katakana, 0x3001 <= *pos && *pos <= 0x3002)
 					|| ifSetting(halfStop, katakana, *pos == 0xff61 || *pos == 0xff64)
 					|| ifSetting(halfVoiced, katakana, 0xff9e <= *pos && *pos <= 0xff9f)
 					|| ifSetting(halfProlonged, katakana, *pos == 0xff70)
-				)
+					)
 				)
 				++(*count)[katakana];
 
@@ -182,7 +173,7 @@ namespace count {
 					ifSetting(cjkIteration, cjk, *pos == 0x3005)
 					|| ifSetting(closing, cjk, *pos == 0x3006)
 					|| ifSetting(numberZero, cjk, *pos == 0x3007)
-				)
+					)
 				)
 				++(*count)[cjk];
 
@@ -194,7 +185,7 @@ namespace count {
 					&& ifNotSetting(halfProlonged, halfkana, *pos == 0xff70)
 					&& ifNotSetting(corner, halfkana, 0xff62 <= *pos && *pos <= 0xff63)
 					&& ifNotSetting(middle, katahalf, *pos == 0xff65)
-				)
+					)
 				)
 				++(*count)[halfkatakana];
 		}
@@ -204,8 +195,7 @@ namespace count {
 	std::array<long, countsSize>
 		count(bool* selection,
 			HWND editor,
-			const std::array<unsigned char, settings::settingsSize>& settings)
-	{
+			const std::array<unsigned char, settings::settingsSize>& settings) {
 		WCHAR progressTextHalf[50];
 		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
 
@@ -248,8 +238,7 @@ namespace count {
 				delete[] text;
 			}
 			Editor_SetStatusW(editor, L"");
-		}
-		else { // Selection
+		} else { // Selection
 			*selection = true;
 
 			long textSize = static_cast<long>(Editor_GetSelTextW(editor, 0, NULL));
