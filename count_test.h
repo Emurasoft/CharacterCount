@@ -41,8 +41,6 @@ TEST(count, countText) {
 			settings::defaultSettings,
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
 		},
-
-		
 		{ // 1. eol counted as character
 			{
 				settings::one,settings::neither,settings::halfkana,settings::hiragana,settings::halfkana,settings::katakana,
