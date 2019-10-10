@@ -8,7 +8,6 @@
 #include "count.h"
 
 namespace count {
-
 	inline bool isHighSurrogate(wchar_t c) {
 		return c >= 0xd800 && c <= 0xdbff;
 	}
@@ -45,17 +44,17 @@ namespace count {
 				0xdd00 <= c[1] && c[1] <= 0xddef)
 			|| (0x180b <= *c && *c <= 0x180d)	// Mongolian free variation selectors
 			|| *c == 0x3035						// VERTICAL KANA REPEAT MARK LOWER HALF
-		);
+			);
 	}
 
-	// Get width of character at c, taking into account surrogate pairs and combining characters.
-	inline int getWidth(HWND editor, wchar_t* c, wchar_t* begin) {
+	// Get width of wchar at c, taking into account surrogate pairs and combining characters.
+	inline int charWidth(wchar_t* c, wchar_t* begin, std::function<int(unsigned int c)> getWidth) {
 		// wchar at c is a trailing surrogate
-		if (c != begin && isHighSurrogate(c[-1]) && isLowSurrogate(c[0])) {
+		if (c != begin && isHighSurrogate(c[-1]) && isLowSurrogate(c[0])) { // TODO should loop a second time for cleaner code
 			return 0;
 		}
 
-		return Editor_IsCharHalfOrFull(editor, surrogateToScaler(c));
+		return getWidth(surrogateToScaler(c));
 	}
 
 	// Macros used in countText()
@@ -72,7 +71,7 @@ namespace count {
 	void countText(wchar_t* text,
 		long textSize,
 		std::array<long, countsSize>* count,
-		HWND editor,
+		std::function<int(unsigned int c)> getWidth,
 		const std::array<unsigned char, settings::settingsSize>& settings) {
 		wchar_t* end = text + textSize - 1;
 
@@ -84,15 +83,17 @@ namespace count {
 
 				// Halfwidth/fullwidth
 				if (*pos < 0x30000) {
-					if (widthTable.at(*pos) < 1)
-						widthTable.at(*pos) = getWidth(editor, pos, text);
+					if (widthTable.at(*pos) < 1) {
+						widthTable.at(*pos) = charWidth(pos, text, getWidth);
+					}
 
-					if (widthTable.at(*pos) == 1)
+					if (widthTable.at(*pos) == 1) {
 						++(*count)[halfwidth];
-					else if (widthTable.at(*pos) == 2)
+					} else if (widthTable.at(*pos) == 2) {
 						++(*count)[fullwidth];
+					}
 				} else {
-					switch (getWidth(editor, pos, text)) {
+					switch (charWidth(pos, text, getWidth)) {
 					case 1:
 						++(*count)[halfwidth];
 						break;
@@ -125,12 +126,14 @@ namespace count {
 			}
 
 			// Space
-			else if (*pos == 0x0020)
+			else if (*pos == 0x0020) {
 				++(*count)[halfspace];
+			}
 
 			// Fullwidth space
-			else if (*pos == 0x3000)
+			else if (*pos == 0x3000) {
 				++(*count)[fullspace];
+			}
 
 			// Hiragana
 			else if (0x3040 <= *pos && *pos <= 0x309F
@@ -146,8 +149,9 @@ namespace count {
 					|| ifSetting(halfProlonged, hiragana, *pos == 0xff70)
 					|| ifSetting(repeat, hiragana, 0x3031 <= *pos && *pos <= 0x3035)
 					)
-				)
+				) {
 				++(*count)[hiragana];
+			}
 
 			// Katakana
 			else if (0x30A0 <= *pos && *pos <= 0x30FF
@@ -162,8 +166,9 @@ namespace count {
 					|| ifSetting(halfVoiced, katakana, 0xff9e <= *pos && *pos <= 0xff9f)
 					|| ifSetting(halfProlonged, katakana, *pos == 0xff70)
 					)
-				)
+				) {
 				++(*count)[katakana];
+			}
 
 			// CJK unified ideograph range
 			else if (0x4E00 <= *pos && *pos <= 0x9FFF
@@ -172,8 +177,9 @@ namespace count {
 					|| ifSetting(closing, cjk, *pos == 0x3006)
 					|| ifSetting(numberZero, cjk, *pos == 0x3007)
 					)
-				)
+				) {
 				++(*count)[cjk];
+			}
 
 			// Halfwidth katakana
 			else if (0xFF61 <= *pos && *pos <= 0xFF9F
@@ -184,8 +190,9 @@ namespace count {
 					&& ifNotSetting(corner, halfkana, 0xff62 <= *pos && *pos <= 0xff63)
 					&& ifNotSetting(middle, katahalf, *pos == 0xff65)
 					)
-				)
+				) {
 				++(*count)[halfkatakana];
+			}
 		}
 	}
 
@@ -209,6 +216,10 @@ namespace count {
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
+		std::function<int(unsigned int c)> getWidth = [&](unsigned int c) {
+			return Editor_IsCharHalfOrFull(editor, c);
+		};
+
 		if (start.y == end.y && start.x == end.x) { // Whole document
 			*selection = false;
 
@@ -223,7 +234,7 @@ namespace count {
 				lineInfo.cch = textSize;
 				Editor_GetLineW(editor, &lineInfo, text);
 
-				countText(text, textSize, &counts, editor, settings);
+				countText(text, textSize, &counts, getWidth, settings);
 
 				if ((i & 0xffff) == 0) {
 					std::wstring progressText
@@ -244,7 +255,7 @@ namespace count {
 			VERIFY(text);
 			Editor_GetSelTextW(editor, textSize, text);
 
-			countText(text, textSize, &counts, editor, settings);
+			countText(text, textSize, &counts, getWidth, settings);
 			counts[selStart] = (int)start.y + 1;
 			counts[selEnd] = (int)end.y + 1;
 			delete[] text;
@@ -256,18 +267,21 @@ namespace count {
 
 		// This shouldn't happpen, but you never know.
 		VERIFY(counts[chars] >= 0 && counts[halfwidth] >= 0);
-		if (counts[chars] < 0)
+		if (counts[chars] < 0) {
 			counts[chars] = 0;
+		}
 
-		if (counts[halfwidth] < 0)
+		if (counts[halfwidth] < 0) {
 			counts[halfwidth] = 0;
+		}
 
 		// Width sum
 		counts[width] = counts[halfwidth] + 2 * counts[fullwidth];
 
 		// Count eol as 1 character setting
-		if (settings[settings::eol] == settings::one)
+		if (settings[settings::eol] == settings::one) {
 			counts[chars] += counts[logicalLines] - 1;
+		}
 
 		return counts;
 	}
