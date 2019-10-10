@@ -16,6 +16,7 @@
 #include <array>
 #include <mutex>
 #include <tuple>
+#include <functional>
 
 #ifdef _DEBUG
 #define VERIFY(f) _ASSERTE(f)

@@ -8,44 +8,43 @@
 #include "registry.h"
 
 namespace settings {
-	// Reads settings from registry.
-	std::array<unsigned char, settingsSize> readSettings(HWND editor) {
-		DWORD dataSize = settingsSize;
-		BYTE readData[settingsSize];
-		if (Editor_RegQueryValue(editor, EEREG_EMEDITORPLUGIN, L"CharacterCount", L"settings",
-			REG_BINARY, readData, &dataSize, 0)
-			!= ERROR_SUCCESS) {
-			return defaultSettings;
-		};
+// Reads settings from registry.
+std::array<unsigned char, settingsSize> readSettings(HWND editor) {
+	DWORD dataSize = settingsSize;
+	BYTE readData[settingsSize];
+	if (Editor_RegQueryValue(editor, EEREG_EMEDITORPLUGIN, L"CharacterCount", L"settings",
+		REG_BINARY, readData, &dataSize, 0)
+		!= ERROR_SUCCESS) {
+		return defaultSettings;
+	};
 
-		if (dataSize != settingsSize)
-			return defaultSettings;
+	if (dataSize != settingsSize)
+		return defaultSettings;
 
-		std::array<unsigned char, settingsSize> loadSettings;
-		for (unsigned char i = 0; i < settingsSize; ++i) {
-			if (std::find(menus[i].begin(), menus[i].end(), readData[i]) != menus[i].end()) {
-				loadSettings[i] = readData[i];
-			}
-			else {
-				return defaultSettings;
-			}
+	std::array<unsigned char, settingsSize> loadSettings;
+	for (unsigned char i = 0; i < settingsSize; ++i) {
+		if (std::find(menus[i].begin(), menus[i].end(), readData[i]) != menus[i].end()) {
+			loadSettings[i] = readData[i];
+		} else {
+			return defaultSettings;
 		}
-		return loadSettings;
 	}
+	return loadSettings;
+}
 
-	// Writes settings to registry and returns true if successful.
-	bool writeSettings(HWND editor, const std::array<unsigned char, settingsSize>& settings) {
-		return Editor_RegSetValue(editor, EEREG_EMEDITORPLUGIN, L"CharacterCount", L"settings",
-			REG_BINARY, settings.data(), static_cast<DWORD>(settings.size()), EE_REG_VARIABLE_SIZE)
-			== ERROR_SUCCESS;
-	}
+// Writes settings to registry and returns true if successful.
+bool writeSettings(HWND editor, const std::array<unsigned char, settingsSize>& settings) {
+	return Editor_RegSetValue(editor, EEREG_EMEDITORPLUGIN, L"CharacterCount", L"settings",
+		REG_BINARY, settings.data(), static_cast<DWORD>(settings.size()), EE_REG_VARIABLE_SIZE)
+		== ERROR_SUCCESS;
+}
 
-	// Deletes registry key.
-	void deleteSettings() {
-		HKEY key;
-		RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\EmSoft\\EmEditorPlugIns",
-			0, KEY_SET_VALUE, &key);
-		RegDeleteKey(key, L"CharacterCount");
-	}
+// Deletes registry key.
+void deleteSettings() {
+	HKEY key;
+	RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\EmSoft\\EmEditorPlugIns",
+		0, KEY_SET_VALUE, &key);
+	RegDeleteKey(key, L"CharacterCount");
+}
 
 }

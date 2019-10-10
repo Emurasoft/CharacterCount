@@ -13,20 +13,19 @@ To update version:
 
 namespace charCount {
 
-	// Centers window relative to parent window.
-	void CenterWindow(HWND hDlg);
+// Centers window relative to parent window.
+void CenterWindow(HWND hDlg);
 
-	class Window
-	{
-	public:
-		HWND editor;
-		std::array<unsigned char, settings::settingsSize> settings;
-		std::wstring textOutput;
-		bool showWindow;
-		std::mutex keyboardLock;
+class Window {
+public:
+	HWND editor;
+	std::array<unsigned char, settings::settingsSize> settings;
+	std::wstring textOutput;
+	bool showWindow;
+	std::mutex keyboardLock;
 
-		static INT_PTR CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	static INT_PTR CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-		Window(HWND window, HWND editor, bool showWindow = true);
-	};
+	Window(HWND window, HWND editor, bool showWindow = true);
+};
 }

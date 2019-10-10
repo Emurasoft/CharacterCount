@@ -25,6 +25,12 @@ namespace count {
 		countsSize
 	};
 
+	void countText(wchar_t* text,
+		long textSize,
+		std::array<long, countsSize>* count,
+		std::function<int(unsigned int ch)> getWidth,
+		const std::array<unsigned char, settings::settingsSize>& settings);
+
 	std::array<long, countsSize> count(
 		bool* selection,
 		HWND editor,
