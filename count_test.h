@@ -12,35 +12,48 @@ std::function<int(unsigned int c)> getWidth = [](unsigned int c) {
 	return 1;
 };
 
-std::string convertCountsToOutput(const std::array<long, count::countsSize>& counts) {
+std::string countsString(const std::array<long, count::countsSize>& counts) {
 	return
-		std::string("Characters: ") + std::to_string(counts[0]) +
-		"\nLogical lines: " + std::to_string(counts[1]) +
-		"\nView lines: " + std::to_string(counts[2]) +
-		"\nLF: " + std::to_string(counts[3]) +
-		"\nCR: " + std::to_string(counts[4]) +
-		"\nCR+LF: " + std::to_string(counts[5]) +
-		"\nWidth: " + std::to_string(counts[6]) +
-		"\nHalfwidth character: " + std::to_string(counts[7]) +
-		"\nFullwidth character: " + std::to_string(counts[8]) +
-		"\nSpace: " + std::to_string(counts[9]) +
-		"\nIdeographic space: " + std::to_string(counts[10]) +
-		"\nTab character: " + std::to_string(counts[11]) +
-		"\nControl character: " + std::to_string(counts[12]) +
-		"\nCJK Unified Ideograph: " + std::to_string(counts[13]) +
-		"\nHiragana: " + std::to_string(counts[14]) +
-		"\nKatakana: " + std::to_string(counts[15]) +
-		"\nHalfwidth katakana: " + std::to_string(counts[16]) + "\n";
+		std::string("Characters: ") + std::to_string(counts[count::chars]) +
+		"\nSelection start:" + std::to_string(counts[count::selStart]) +
+		"\nSelection end:" + std::to_string(counts[count::selEnd]) +
+		"\nLogical lines: " + std::to_string(counts[count::logicalLines]) +
+		"\nView lines: " + std::to_string(counts[count::viewLines]) +
+		"\nLF: " + std::to_string(counts[count::lf]) +
+		"\nCR: " + std::to_string(counts[count::cr]) +
+		"\nCR+LF: " + std::to_string(counts[count::crlf]) +
+		"\nWidth: " + std::to_string(counts[count::width]) +
+		"\nHalfwidth character: " + std::to_string(counts[count::halfwidth]) +
+		"\nFullwidth character: " + std::to_string(counts[count::fullwidth]) +
+		"\nSpace: " + std::to_string(counts[count::halfspace]) +
+		"\nIdeographic space: " + std::to_string(counts[count::fullspace]) +
+		"\nTab character: " + std::to_string(counts[count::tabCharacters]) +
+		"\nControl character: " + std::to_string(counts[count::controlCharacters]) +
+		"\nCJK Unified Ideograph: " + std::to_string(counts[count::cjk]) +
+		"\nHiragana: " + std::to_string(counts[count::hiragana]) +
+		"\nKatakana: " + std::to_string(counts[count::katakana]) +
+		"\nHalfwidth katakana: " + std::to_string(counts[count::halfkatakana]) + "\n";
 }
 
 TEST(count, countText) {
-	std::wstring text = L"àあアｱ一\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
+	std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
 	std::array<long, count::countsSize> result{};
 
-	count::countText(const_cast<wchar_t*>(text.c_str()), text.size(), &result, getWidth, settings::defaultSettings);
-	std::array<long, count::countsSize> expected = { {21,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5} };
+	count::countText(const_cast<wchar_t*>(text.c_str()), text.size() + 1, &result, getWidth, settings::defaultSettings);
 
-	std::cout << convertCountsToOutput(result);
+	result[count::logicalLines] = 2;
+	result[count::viewLines] = 2;
+
+	result[count::chars] -= result[count::controlCharacters] - result[count::tabCharacters];
+	result[count::halfwidth] -= result[count::controlCharacters] - result[count::tabCharacters];
+
+	result[count::width] = result[count::halfwidth] + 2 * result[count::fullwidth];
+
+	if (settings::defaultSettings[settings::eol] == settings::one) {
+		result[count::chars] += result[count::logicalLines] - 1;
+	}
+
+	std::array<long, count::countsSize> expected{ {21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5} };
 	ASSERT_EQ(result, expected);
 }
 
