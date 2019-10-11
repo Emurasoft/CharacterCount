@@ -224,6 +224,7 @@ count(bool* selection,
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
 
+	std::wstring text;
 	std::vector<int> runes;
 
 	if (start.y == end.y && start.x == end.x) { // Whole document
@@ -237,15 +238,14 @@ count(bool* selection,
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
 			
-			std::wstring text; // TODO reuse wstring for each loop
 			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 
 			lineInfo.cch = text.size() + 1;
 			Editor_GetLineW(editor, &lineInfo, text.data());
 
-			wcharToRunes(&runes, text)
+			wcharToRunes(&runes, text);
 
-			countText(test.data(), test.size() + 1, &counts, getWidth, settings); // TODO
+			//countText(test.data(), test.size() + 1, &counts, getWidth, settings); // TODO
 
 			if ((i & 0xffff) == 0) {
 				std::wstring progressText
