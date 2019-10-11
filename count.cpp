@@ -46,13 +46,6 @@ inline bool baseCharacter(int c) {
 		);
 }
 
-// Macros used in countText()
-// Exclude characters on setting
-#define ifNotSetting(key,value,match) ( settings[settings::key] == settings::value || !(match) )
-
-// Include characters on setting
-#define ifSetting(key,value,match) ( settings[settings::key] == settings::value && (match) )
-
 // character to width cache (0 is undefined)
 std::array<int, 0x30000> widthTable{ {0} };
 
