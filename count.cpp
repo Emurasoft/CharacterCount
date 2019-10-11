@@ -123,30 +123,27 @@ void countText(
 		}
 
 		// Hiragana
-		else if (0x3040 <= runes[i] && runes[i] <= 0x309F
-			&& (
-				ifNotSetting(voiced, hiragana, 0x309b <= runes[i] && runes[i] <= 0x309c)
-				&& ifNotSetting(hiraIteration, hirakata, 0x309d <= runes[i] && runes[i] <= 0x309e)
-				)
-			|| (
-				ifSetting(stop, hiragana, 0x3001 <= runes[i] && runes[i] <= 0x3002)
-				|| ifSetting(halfStop, hiragana, runes[i] == 0xff61 || runes[i] == 0xff64)
-				|| ifSetting(halfVoiced, hiragana, 0xff9e <= runes[i] && runes[i] <= 0xff9f)
-				|| ifSetting(prolonged, hiragana, runes[i] == 0x30fc)
-				|| ifSetting(halfProlonged, hiragana, runes[i] == 0xff70)
-				|| ifSetting(repeat, hiragana, 0x3031 <= runes[i] && runes[i] <= 0x3035)
-				)
-			) {
+		else if (
+			0x3040 <= runes[i] && runes[i] <= 0x309F
+			// Exclude characters if not setting
+			&& (settings[settings::voiced] == settings::hiragana || !(0x309b == runes[i] || runes[i] == 0x309c))
+			&& (settings[settings::hiraIteration] == settings::hirakata || !(runes[i] == 0x309d || runes[i] == 0x309e))
+			// Include characters on setting
+			|| (settings[settings::stop] == settings::hiragana && (runes[i] == 0x3001 || runes[i] == 0x3002))
+			|| (settings[settings::halfStop] == settings::hiragana && (runes[i] == 0xff61 || runes[i] == 0xff64))
+			|| (settings[settings::halfVoiced] == settings::hiragana && (runes[i] == 0xff9e || runes[i] == 0xff9f))
+			|| (settings[settings::prolonged] == settings::hiragana && runes[i] == 0x30fc)
+			|| (settings[settings::halfProlonged] == settings::hiragana && runes[i] == 0xff70)
+			|| (settings[settings::repeat] == settings::hiragana && 0x3031 <= runes[i] && runes[i] <= 0x3035)
+		) {
 			++(*count)[hiragana];
 		}
 
 		// Katakana
 		else if (0x30A0 <= runes[i] && runes[i] <= 0x30FF
-			&& (
-				ifNotSetting(prolonged, katakana, runes[i] == 0x30fc)
-				&& ifNotSetting(hiraIteration, hirakata, 0x30fd <= runes[i] && runes[i] <= 0x30fe)
-				&& ifNotSetting(middle, katahalf, runes[i] == 0x30fb)
-				)
+			&& (settings[settings::prolonged] == settings::katakana || !(runes[i] == 0x30fc))
+			&& (settings[settings::hiraIteration] == settings::hirakata || !(0x30fd <= runes[i] && runes[i] <= 0x30fe))
+			&& (settings[settings::middle] == settings::katahalf || !(runes[i] == 0x30fb))
 			|| (
 				ifSetting(stop, katakana, 0x3001 <= runes[i] && runes[i] <= 0x3002)
 				|| ifSetting(halfStop, katakana, runes[i] == 0xff61 || runes[i] == 0xff64)
@@ -233,7 +230,7 @@ count(bool* selection,
 
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
-			
+
 			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 
 			lineInfo.cch = text.size() + 1;
@@ -268,7 +265,7 @@ count(bool* selection,
 		counts[selEnd] = (int)end.y + 1;
 
 		counts[logicalLines] = end.y - start.y + 1;
-		
+
 		POINT_PTR viewStart;
 		Editor_GetSelStart(editor, POS_VIEW, &viewStart);
 

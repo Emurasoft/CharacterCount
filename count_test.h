@@ -81,7 +81,7 @@ std::string countsString(const std::array<long, count::countsSize>& counts) {
 
 TEST(count, countText) {
 	std::vector<std::tuple<std::array<unsigned char, settings::settingsSize>, std::array<long, count::countsSize>>> tests{
-		{ // 00. default
+		{ // 0. default
 			settings::defaultSettings,
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
 		},
