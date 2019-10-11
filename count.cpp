@@ -140,40 +140,37 @@ void countText(
 		}
 
 		// Katakana
-		else if (0x30A0 <= runes[i] && runes[i] <= 0x30FF
+		else if (
+			0x30A0 <= runes[i] && runes[i] <= 0x30FF
 			&& (settings[settings::prolonged] == settings::katakana || !(runes[i] == 0x30fc))
 			&& (settings[settings::hiraIteration] == settings::hirakata || !(0x30fd <= runes[i] && runes[i] <= 0x30fe))
 			&& (settings[settings::middle] == settings::katahalf || !(runes[i] == 0x30fb))
-			|| (
-				ifSetting(stop, katakana, 0x3001 <= runes[i] && runes[i] <= 0x3002)
-				|| ifSetting(halfStop, katakana, runes[i] == 0xff61 || runes[i] == 0xff64)
-				|| ifSetting(halfVoiced, katakana, 0xff9e <= runes[i] && runes[i] <= 0xff9f)
-				|| ifSetting(halfProlonged, katakana, runes[i] == 0xff70)
-				)
+			|| (settings[settings::stop] == settings::katakana && (runes[i] == 0x3001 || runes[i] == 0x3002))
+			|| (settings[settings::halfStop] == settings::katakana && (runes[i] == 0xff61 || runes[i] == 0xff64))
+			|| (settings[settings::halfVoiced] == settings::katakana && (runes[i] == 0xff9e || runes[i] == 0xff9f))
+			|| (settings[settings::halfProlonged] == settings::katakana && runes[i] == 0xff70)
 			) {
 			++(*count)[katakana];
 		}
 
 		// CJK unified ideograph range
-		else if (0x4E00 <= runes[i] && runes[i] <= 0x9FFF
-			|| (
-				ifSetting(cjkIteration, cjk, runes[i] == 0x3005)
-				|| ifSetting(closing, cjk, runes[i] == 0x3006)
-				|| ifSetting(numberZero, cjk, runes[i] == 0x3007)
-				)
+		else if (
+			0x4E00 <= runes[i] && runes[i] <= 0x9FFF
+			|| (settings[settings::cjkIteration] == settings::cjk && runes[i] == 0x3005)
+			|| (settings[settings::closing] == settings::cjk && runes[i] == 0x3006)
+			|| (settings[settings::numberZero] == settings::cjk && runes[i] == 0x3007)
 			) {
 			++(*count)[cjk];
 		}
 
 		// Halfwidth katakana
-		else if (0xFF61 <= runes[i] && runes[i] <= 0xFF9F
-			&& (
-				ifNotSetting(halfStop, halfkana, runes[i] == 0xff61 || runes[i] == 0xff64)
-				&& ifNotSetting(halfVoiced, halfkana, 0xff9e <= runes[i] && runes[i] <= 0xff9f)
-				&& ifNotSetting(halfProlonged, halfkana, runes[i] == 0xff70)
-				&& ifNotSetting(corner, halfkana, 0xff62 <= runes[i] && runes[i] <= 0xff63)
-				&& ifNotSetting(middle, katahalf, runes[i] == 0xff65)
-				)
+		else if (
+			0xFF61 <= runes[i] && runes[i] <= 0xFF9F
+			&& (settings[settings::halfStop] == settings::halfkana || !(runes[i] == 0xff61 || runes[i] == 0xff64))
+			&& (settings[settings::halfVoiced] == settings::halfkana || !(runes[i] == 0xff9e || runes[i] == 0xff9f))
+			&& (settings[settings::halfProlonged] == settings::halfkana || !(runes[i] == 0xff70))
+			&& (settings[settings::corner] == settings::halfkana || !(runes[i] == 0xff62 || runes[i] == 0xff63))
+			&& (settings[settings::middle] == settings::katahalf || !(runes[i] == 0xff65))
 			) {
 			++(*count)[halfkatakana];
 		}
