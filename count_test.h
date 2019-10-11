@@ -2,6 +2,10 @@
 #include "gtest/gtest.h"
 #include "count.h"
 
+HINSTANCE EEGetLocaleInstanceHandle() { // Resolves linking issue
+	return NULL;
+}
+
 namespace {
 
 std::function<int(unsigned int c)> getWidth = [](unsigned int c) {
