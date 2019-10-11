@@ -204,7 +204,7 @@ count(bool* selection,
 	const std::array<unsigned char, settings::settingsSize>& settings) {
 	WCHAR progressTextHalf[50];
 	// TODO
-	//VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
+	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
 
 	POINT_PTR start;
 	Editor_GetSelStart(editor, POS_LOGICAL_W, &start);
@@ -215,9 +215,6 @@ count(bool* selection,
 	// Main table to keep track of counts
 	std::array<long, countsSize> counts{ {0} };
 
-	counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
-	counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
-
 	std::function<int(unsigned int c)> getWidth = [&](unsigned int c) {
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
@@ -225,10 +222,12 @@ count(bool* selection,
 	if (start.y == end.y && start.x == end.x) { // Whole document
 		*selection = false;
 
+		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
+		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
+
 		GET_LINE_INFO lineInfo;
 
 		for (long i = 0; i < counts[logicalLines]; ++i) {
-
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
 
 			long textSize = static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL));
@@ -260,6 +259,17 @@ count(bool* selection,
 		countText(text, textSize, &counts, getWidth, settings);
 		counts[selStart] = (int)start.y + 1;
 		counts[selEnd] = (int)end.y + 1;
+
+		counts[logicalLines] = end.y - start.y + 1;
+		
+		POINT_PTR viewStart;
+		Editor_GetSelStart(editor, POS_VIEW, &viewStart);
+
+		POINT_PTR viewEnd;
+		Editor_GetSelEnd(editor, POS_VIEW, &viewEnd);
+
+		counts[viewLines] = viewEnd.y - viewStart.y + 1;
+
 		delete[] text;
 	}
 
