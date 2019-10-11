@@ -196,14 +196,10 @@ count(
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
 
-	bool selection;
-
 	std::wstring text;
 	std::vector<int> runes;
 
 	if (start.y == end.y && start.x == end.x) { // Whole document
-		selection = false;
-
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
@@ -232,10 +228,8 @@ count(
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		selection = true;
-
 		long textSize = static_cast<long>(Editor_GetSelTextW(editor, 0, NULL));
-		text.resize(textSize);
+		text.resize(textSize - 1);
 
 		Editor_GetSelTextW(editor, textSize, text.data());
 
@@ -278,6 +272,6 @@ count(
 		counts[chars] += counts[logicalLines] - 1;
 	}
 
-	return countResult{counts, selection};
+	return countResult{counts, start.y != end.y || start.x != end.x };
 }
 }
