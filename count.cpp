@@ -75,7 +75,7 @@ void countText(
 			if (runes[i] == '\t') {
 				++(*count)[tabCharacters];
 			} else if (runes[i] == '\r') {
-				if (runes[i + 1] == '\n') { // CR+LF
+				if (i + 1 < runes.size() && runes[i + 1] == '\n') { // CR+LF
 					++(*count)[crlf];
 					++i; // increment counts for LF and skip last loop
 					++(*count)[chars];
@@ -163,7 +163,7 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 	dst->reserve(src.size());
 
 	for (size_t srcI = 0; srcI < src.size();) {
-		if (isLowSurrogate(src[srcI + 1])) {
+		if (srcI + 1 < src.size() && isLowSurrogate(src[srcI + 1])) {
 			const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
 			dst->push_back((src[srcI] << 10) + src[srcI + 1] + offset);
 			srcI += 2;
