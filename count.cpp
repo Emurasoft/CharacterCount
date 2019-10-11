@@ -203,7 +203,6 @@ count(bool* selection,
 	HWND editor,
 	const std::array<unsigned char, settings::settingsSize>& settings) {
 	WCHAR progressTextHalf[50];
-	// TODO
 	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
 
 	POINT_PTR start;
