@@ -27,8 +27,7 @@ namespace count {
 
 	void wcharToRunes(std::vector<int>* dst, const std::wstring& src);
 
-	void countText(wchar_t* text,
-		long textSize,
+	void countText(const std::vector<int>& runes,
 		std::array<long, countsSize>* count,
 		std::function<int(unsigned int ch)> getWidth,
 		const std::array<unsigned char, settings::settingsSize>& settings);

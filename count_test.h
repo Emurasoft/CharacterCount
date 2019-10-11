@@ -201,9 +201,11 @@ TEST(count, countText) {
 
 	for (size_t i = 0; i < tests.size(); ++i) {
 		std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
+		std::vector<int> runes;
+		count::wcharToRunes(&runes, text);
 		std::array<long, count::countsSize> result{};
 
-		count::countText(const_cast<wchar_t*>(text.c_str()), text.size() + 1, &result, getWidth, std::get<0>(tests[i]));
+		count::countText(runes, &result, getWidth, std::get<0>(tests[i]));
 
 		result[count::logicalLines] = 2;
 		result[count::viewLines] = 2;
