@@ -54,7 +54,7 @@ inline int charWidth(wchar_t* c, wchar_t* begin, std::function<int(unsigned int 
 		return 0;
 	}
 
-	return getWidth(/*surrogateToScaler(c)*/0);
+	return getWidth(surrogateToScaler(c));
 }
 
 // Macros used in countText()
