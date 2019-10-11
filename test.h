@@ -3,6 +3,6 @@
 #ifdef _DEBUG
 
 // define _test to run test.cpp instead of CMyFrame.cpp
-#define _test
+//#define _test
 
 #endif
