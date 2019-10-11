@@ -37,7 +37,8 @@ void countText(
 	const std::vector<int>& runes,
 	std::array<long, countsSize>* count,
 	std::function<int(unsigned int c)> getWidth,
-	const std::array<unsigned char, settings::settingsSize>& settings) {
+	const std::array<unsigned char, settings::settingsSize>& settings
+) {
 	for (size_t i = 0; i < runes.size(); ++i) {
 		if (baseCharacter(runes[i])) {
 			++(*count)[chars];
@@ -111,7 +112,7 @@ void countText(
 			|| (settings[settings::prolonged] == settings::hiragana && runes[i] == 0x30fc)
 			|| (settings[settings::halfProlonged] == settings::hiragana && runes[i] == 0xff70)
 			|| (settings[settings::repeat] == settings::hiragana && 0x3031 <= runes[i] && runes[i] <= 0x3035)
-		) {
+			) {
 			++(*count)[hiragana];
 		}
 
@@ -174,10 +175,11 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 }
 
 // Returns the sums of each kind of character.
-std::array<long, countsSize>
-count(bool* selection,
+countResult
+count(
 	HWND editor,
-	const std::array<unsigned char, settings::settingsSize>& settings) {
+	const std::array<unsigned char, settings::settingsSize>& settings
+) {
 	WCHAR progressTextHalf[50];
 	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
 
@@ -194,11 +196,13 @@ count(bool* selection,
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
 
+	bool selection;
+
 	std::wstring text;
 	std::vector<int> runes;
 
 	if (start.y == end.y && start.x == end.x) { // Whole document
-		*selection = false;
+		selection = false;
 
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
@@ -228,7 +232,7 @@ count(bool* selection,
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		*selection = true;
+		selection = true;
 
 		long textSize = static_cast<long>(Editor_GetSelTextW(editor, 0, NULL));
 		text.resize(textSize);
@@ -274,6 +278,6 @@ count(bool* selection,
 		counts[chars] += counts[logicalLines] - 1;
 	}
 
-	return counts;
+	return countResult{counts, selection};
 }
 }
