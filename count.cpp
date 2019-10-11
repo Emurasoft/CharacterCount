@@ -16,6 +16,15 @@ inline bool isLowSurrogate(wchar_t c) {
 	return c >= 0xdc00 && c <= 0xdfff;
 }
 
+inline unsigned surrogateToScaler(wchar_t* c) {
+	if (isLowSurrogate(c[1])) {
+		const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
+		return (c[0] << 10) + c[1] + offset;
+	}
+
+	return static_cast<unsigned>(*c);
+}
+
 inline bool baseCharacter(wchar_t* c) {
 	return !(
 		(0xdc00 <= *c && *c <= 0xdfff)	// Trailing surrogate
