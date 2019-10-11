@@ -228,13 +228,14 @@ count(bool* selection,
 
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
+			
+			std::wstring test;
+			test.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 
-			long textSize = static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL));
-			wchar_t* text = new wchar_t[textSize];
-			lineInfo.cch = textSize;
-			Editor_GetLineW(editor, &lineInfo, text);
+			lineInfo.cch = test.size() + 1;
+			Editor_GetLineW(editor, &lineInfo, test.data());
 
-			countText(text, textSize, &counts, getWidth, settings);
+			countText(test.data(), test.size() + 1, &counts, getWidth, settings); // TODO
 
 			if ((i & 0xffff) == 0) {
 				std::wstring progressText
@@ -244,7 +245,6 @@ count(bool* selection,
 					+ L"%";
 				Editor_SetStatusW(editor, progressText.c_str());
 			}
-			delete[] text;
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
