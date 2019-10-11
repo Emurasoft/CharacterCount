@@ -25,6 +25,8 @@ namespace count {
 		countsSize
 	};
 
+	void wcharToRunes(std::vector<int>* dst, const std::wstring& src);
+
 	void countText(wchar_t* text,
 		long textSize,
 		std::array<long, countsSize>* count,

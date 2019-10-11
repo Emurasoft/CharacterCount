@@ -8,6 +8,46 @@ HINSTANCE EEGetLocaleInstanceHandle() { // Resolves linking issue
 
 namespace {
 
+TEST(count, wcharToRunes) {
+	struct test {
+		const std::wstring src;
+		const std::vector<int> expected;
+	};
+
+	std::vector<test> tests{
+		{
+			L"",
+			{},
+		},
+		{
+			L"a",
+			{'a'},
+		},
+		{
+			L"aa",
+			{'a', 'a'},
+		},
+		{
+			L"\xd800\xdc00",
+			{0x10000},
+		},
+		{
+			L"\xd800\xdc00\xd800\xdc00",
+			{0x10000,0x10000},
+		},
+		{
+			L"\xdc00",
+			{0xdc00},
+		},
+	};
+
+	std::vector<int> dst;
+	for (size_t i = 0; i < tests.size(); ++i) {
+		count::wcharToRunes(&dst, tests[i].src);
+		EXPECT_EQ(dst, tests[i].expected) << "i=" << i;
+	}
+}
+
 std::function<int(unsigned int c)> getWidth = [](unsigned int c) {
 	if (c == 0x3042 || c == 0x30A2 || c == 0x4e00 || c == 0x3000 || c == 0x3001 || c == 0xff61 || c == 0x309b || c == 0x30fc || c == 0x30fb
 		|| c == 0x3031 || c == 0x309d || c == 3005 || c == 0x3006 || c == 0x3007) {

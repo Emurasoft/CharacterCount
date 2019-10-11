@@ -16,15 +16,6 @@ inline bool isLowSurrogate(wchar_t c) {
 	return c >= 0xdc00 && c <= 0xdfff;
 }
 
-inline unsigned surrogateToScaler(wchar_t* c) {
-	if (isLowSurrogate(c[1])) {
-		const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
-		return (c[0] << 10) + c[1] + offset;
-	}
-
-	return static_cast<unsigned>(*c);
-}
-
 inline bool baseCharacter(wchar_t* c) {
 	return !(
 		(0xdc00 <= *c && *c <= 0xdfff)	// Trailing surrogate
@@ -54,7 +45,7 @@ inline int charWidth(wchar_t* c, wchar_t* begin, std::function<int(unsigned int 
 		return 0;
 	}
 
-	return getWidth(surrogateToScaler(c));
+	return getWidth(/*surrogateToScaler(c)*/0);
 }
 
 // Macros used in countText()
@@ -197,6 +188,21 @@ void countText(wchar_t* text,
 	}
 }
 
+void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
+	dst->clear();
+
+	for (size_t srcI = 0; srcI < src.size();) {
+		if (isLowSurrogate(src[srcI + 1])) {
+			const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
+			dst->push_back((src[srcI] << 10) + src[srcI + 1] + offset);
+			srcI += 2;
+		} else {
+			dst->push_back(src[srcI]);
+			srcI++;
+		}
+	}
+}
+
 // Returns the sums of each kind of character.
 std::array<long, countsSize>
 count(bool* selection,
@@ -218,6 +224,8 @@ count(bool* selection,
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
 
+	std::vector<int> runes;
+
 	if (start.y == end.y && start.x == end.x) { // Whole document
 		*selection = false;
 
@@ -229,11 +237,13 @@ count(bool* selection,
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
 			
-			std::wstring test;
-			test.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
+			std::wstring text; // TODO reuse wstring for each loop
+			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 
-			lineInfo.cch = test.size() + 1;
-			Editor_GetLineW(editor, &lineInfo, test.data());
+			lineInfo.cch = text.size() + 1;
+			Editor_GetLineW(editor, &lineInfo, text.data());
+
+			wcharToRunes(&runes, text)
 
 			countText(test.data(), test.size() + 1, &counts, getWidth, settings); // TODO
 
