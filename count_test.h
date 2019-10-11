@@ -199,12 +199,12 @@ TEST(count, countText) {
 		},
 	};
 
-	for (size_t i = 0; i < tests.size(); ++i) {
-		std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
-		std::vector<int> runes;
-		count::wcharToRunes(&runes, text);
-		std::array<long, count::countsSize> result{};
+	std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
+	std::vector<int> runes;
+	count::wcharToRunes(&runes, text);
 
+	for (size_t i = 0; i < tests.size(); ++i) {
+		std::array<long, count::countsSize> result{};
 		count::countText(runes, &result, getWidth, std::get<0>(tests[i]));
 
 		result[count::logicalLines] = 2;
