@@ -12,7 +12,7 @@
 namespace settings {
 
 // Returns position and size for left column text.
-RECT settingsLeftColumn(int cy, int i) {
+RECT settingsLeftColumn(double cy, double i) {
 	double left = cy * 1;
 	double top = cy * 2.0 + i * cy * 1.0;
 	double width = cy * 15;
@@ -22,7 +22,7 @@ RECT settingsLeftColumn(int cy, int i) {
 }
 
 // Returns position and size for right column menu.
-RECT settingsRightColumn(int cy, int i) {
+RECT settingsRightColumn(double cy, double i) {
 	double left = cy * 25 / 2;
 	double top = cy * 2.0 + i * cy * 1.0;
 	double width = cy * 12 / 2;

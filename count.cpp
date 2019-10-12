@@ -181,7 +181,7 @@ count(
 	const std::array<unsigned char, settings::settingsSize>& settings
 ) {
 	WCHAR progressTextHalf[50];
-	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, std::size(progressTextHalf)));
+	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, static_cast<int>(std::size(progressTextHalf))));
 
 	POINT_PTR start;
 	Editor_GetSelStart(editor, POS_LOGICAL_W, &start);
@@ -228,7 +228,7 @@ count(
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		long textSize = static_cast<long>(Editor_GetSelTextW(editor, 0, NULL));
+		size_t textSize = static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL));
 		text.resize(textSize - 1);
 
 		Editor_GetSelTextW(editor, textSize, text.data());
@@ -239,7 +239,7 @@ count(
 		counts[selStart] = (int)start.y + 1;
 		counts[selEnd] = (int)end.y + 1;
 
-		counts[logicalLines] = end.y - start.y + 1;
+		counts[logicalLines] = static_cast<long>(end.y - start.y + 1);
 
 		POINT_PTR viewStart;
 		Editor_GetSelStart(editor, POS_VIEW, &viewStart);
@@ -247,7 +247,7 @@ count(
 		POINT_PTR viewEnd;
 		Editor_GetSelEnd(editor, POS_VIEW, &viewEnd);
 
-		counts[viewLines] = viewEnd.y - viewStart.y + 1;
+		counts[viewLines] = static_cast<long>(viewEnd.y - viewStart.y + 1);
 	}
 
 	// Don't count control characters (except tabs) in character sum

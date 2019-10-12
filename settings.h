@@ -77,6 +77,7 @@ public:
 		bool reopen)
 		: editor(editor)
 		, settings(settings)
+		, comboBoxes()
 		, reopen(reopen) {
 	};
 
