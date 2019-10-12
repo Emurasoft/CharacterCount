@@ -174,6 +174,18 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 	}
 }
 
+void getLineText(std::wstring* dst, HWND editor, int line) {
+	GET_LINE_INFO lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(line), 0 };
+	dst->resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
+	lineInfo.cch = dst->size() + 1;
+	Editor_GetLineW(editor, &lineInfo, dst->data());
+}
+
+void getSelText(std::wstring* dst, HWND editor) {
+	dst->resize(static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL)) - 1);
+	Editor_GetSelTextW(editor, dst->size() + 1, dst->data());
+}
+
 // Returns the sums of each kind of character.
 countResult
 count(
@@ -206,11 +218,7 @@ count(
 		GET_LINE_INFO lineInfo;
 
 		for (long i = 0; i < counts[logicalLines]; ++i) {
-			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
-
-			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
-
-			lineInfo.cch = text.size() + 1;
+			getLineText(&text, editor, i);
 			Editor_GetLineW(editor, &lineInfo, text.data());
 
 			wcharToRunes(&runes, text);
@@ -228,10 +236,9 @@ count(
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		size_t textSize = static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL));
-		text.resize(textSize - 1);
-
-		Editor_GetSelTextW(editor, textSize, text.data());
+		auto test = Editor_GetSelTextW(editor, 0, NULL);
+		text.resize(static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL)) - 1);
+		Editor_GetSelTextW(editor, text.size() + 1, text.data());
 
 		wcharToRunes(&runes, text);
 
