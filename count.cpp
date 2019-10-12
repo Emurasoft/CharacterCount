@@ -181,7 +181,7 @@ count(
 	const std::array<unsigned char, settings::settingsSize>& settings
 ) {
 	WCHAR progressTextHalf[50];
-	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
+	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, std::size(progressTextHalf)));
 
 	POINT_PTR start;
 	Editor_GetSelStart(editor, POS_LOGICAL_W, &start);
