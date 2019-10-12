@@ -8,93 +8,56 @@
 #include "count.h"
 
 namespace count {
-inline bool isHighSurrogate(wchar_t c) {
-	return c >= 0xd800 && c <= 0xdbff;
-}
-
-inline bool isLowSurrogate(wchar_t c) {
-	return c >= 0xdc00 && c <= 0xdfff;
-}
-
-inline unsigned surrogateToScaler(wchar_t* c) {
-	if (isLowSurrogate(c[1])) {
-		const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
-		return (c[0] << 10) + c[1] + offset;
-	}
-
-	return static_cast<unsigned>(*c);
-}
-
-inline bool baseCharacter(wchar_t* c) {
+inline bool baseCharacter(int c) {
 	return !(
-		(0xdc00 <= *c && *c <= 0xdfff)	// Trailing surrogate
-		|| 0x3099 == *c || *c == 0x309a	// Hiragana combination
-		|| 0x0e31 == *c					// Thai combination
-		|| (0x0e33 <= *c && *c <= 0x0e3a)	// Thai combination
-		|| (0x0e47 <= *c && *c <= 0x0e4e)	// Thai combination
-		|| (0x0300 <= *c && *c <= 0x036f)	// Combining diacritical marks
-		|| (0x1ab0 <= *c && *c <= 0x1aff)	// Combining diacritical marks extended
-		|| (0x1dc0 <= *c && *c <= 0x1dff)	// Combining diacritical marks supplement
-		|| (0x20d0 <= *c && *c <= 0x20ff)	// Combining diacritical marks for symbols
-		|| (0xfe20 <= *c && *c <= 0xfe2f)	// Combining half marks
-		|| *c == 0x200d					// ZERO WIDTH JOINER
-		|| *c == 0x200c					// ZERO WIDTH NON-JOINER
-		|| (0xfe00 <= *c && *c <= 0xfe0f)	// Variation selectors
-		|| (0xdb40 <= *c &&					// Variation selectors supplement block
-			0xdd00 <= c[1] && c[1] <= 0xddef)
-		|| (0x180b <= *c && *c <= 0x180d)	// Mongolian free variation selectors
-		|| *c == 0x3035						// VERTICAL KANA REPEAT MARK LOWER HALF
+		(0xdc00 <= c && c <= 0xdfff)	// Trailing surrogate
+		|| 0x3099 == c || c == 0x309a	// Hiragana combination
+		|| 0x0e31 == c					// Thai combination
+		|| (0x0e33 <= c && c <= 0x0e3a)	// Thai combination
+		|| (0x0e47 <= c && c <= 0x0e4e)	// Thai combination
+		|| (0x0300 <= c && c <= 0x036f)	// Combining diacritical marks
+		|| (0x1ab0 <= c && c <= 0x1aff)	// Combining diacritical marks extended
+		|| (0x1dc0 <= c && c <= 0x1dff)	// Combining diacritical marks supplement
+		|| (0x20d0 <= c && c <= 0x20ff)	// Combining diacritical marks for symbols
+		|| (0xfe20 <= c && c <= 0xfe2f)	// Combining half marks
+		|| c == 0x200d					// ZERO WIDTH JOINER
+		|| c == 0x200c					// ZERO WIDTH NON-JOINER
+		|| (0xfe00 <= c && c <= 0xfe0f)	// Variation selectors
+		|| (0xe0100 <= c && c <= 0xe01ef) // Variation selectors supplement block
+		|| (0x180b <= c && c <= 0x180d)	// Mongolian free variation selectors
+		|| c == 0x3035						// VERTICAL KANA REPEAT MARK LOWER HALF
 		);
 }
 
-// Get width of wchar at c, taking into account surrogate pairs and combining characters.
-inline int charWidth(wchar_t* c, wchar_t* begin, std::function<int(unsigned int c)> getWidth) {
-	// wchar at c is a trailing surrogate
-	if (c != begin && isHighSurrogate(c[-1]) && isLowSurrogate(c[0])) { // TODO should loop a second time for cleaner code
-		return 0;
-	}
-
-	return getWidth(surrogateToScaler(c));
-}
-
-// Macros used in countText()
-// Exclude characters on setting
-#define ifNotSetting(key,value,match) ( settings[settings::key] == settings::value || !(match) )
-
-// Include characters on setting
-#define ifSetting(key,value,match) ( settings[settings::key] == settings::value && (match) )
-
 // character to width cache (0 is undefined)
-const size_t widthTableSize = 0x30000;
-std::array<int, widthTableSize> widthTable{ {0} };
+std::array<int, 0x30000> widthTable{ {0} };
 
 // Parses through text and increments count.
-void countText(wchar_t* text,
-	long textSize,
+void countText(
+	const std::vector<int>& runes,
 	std::array<long, countsSize>* count,
 	std::function<int(unsigned int c)> getWidth,
-	const std::array<unsigned char, settings::settingsSize>& settings) {
-	wchar_t* end = text + textSize - 1;
-
-	for (wchar_t* pos = text; pos < end; ++pos) {
-
-		// Number of characters
-		if (pos == text || baseCharacter(pos)) {
+	const std::array<unsigned char, settings::settingsSize>& settings
+) {
+	for (size_t i = 0; i < runes.size(); ++i) {
+		if (baseCharacter(runes[i])) {
 			++(*count)[chars];
 
 			// Halfwidth/fullwidth
-			if (*pos < widthTableSize) {
-				if (widthTable[*pos] == 0) {
-					widthTable[*pos] = charWidth(pos, text, getWidth);
+			if (runes[i] < widthTable.size()) { // TODO turn widthTable into a class
+				if (widthTable[runes[i]] == 0) {
+					widthTable[runes[i]] = getWidth(runes[i]);
 				}
 
-				if (widthTable[*pos] == 1) {
+				switch (widthTable[runes[i]]) {
+				case 1:
 					++(*count)[halfwidth];
-				} else if (widthTable[*pos] == 2) {
+					break;
+				case 2:
 					++(*count)[fullwidth];
 				}
 			} else {
-				switch (charWidth(pos, text, getWidth)) {
+				switch (getWidth(runes[i])) {
 				case 1:
 					++(*count)[halfwidth];
 					break;
@@ -105,105 +68,120 @@ void countText(wchar_t* text,
 		}
 
 		// Control character range
-		if ((0x0000 <= *pos && *pos <= 0x001f)
-			|| 0x007F <= *pos && *pos <= 0x009f) {
+		if ((0x0000 <= runes[i] && runes[i] <= 0x001f)
+			|| 0x007F <= runes[i] && runes[i] <= 0x009f) {
 			++(*count)[controlCharacters];
 
-			if (*pos == 0x9) { // Tab character
+			if (runes[i] == '\t') {
 				++(*count)[tabCharacters];
-			} else if (*pos == 0xd) {
-				if (*(pos + 1) == 0xa) { // CR+LF
+			} else if (runes[i] == '\r') {
+				if (i + 1 < runes.size() && runes[i + 1] == '\n') { // CR+LF
 					++(*count)[crlf];
-					++pos; // increment counts for LF and skip last loop
+					++i; // increment counts for LF and skip last loop
 					++(*count)[chars];
 					++(*count)[controlCharacters];
 					++(*count)[halfwidth];
 				} else { // Carriage return only
 					++(*count)[cr];
 				}
-			} else if (*pos == 0xa) { // Line feed only
+			} else if (runes[i] == '\n') { // Line feed only
 				++(*count)[lf];
 			}
 		}
 
 		// Space
-		else if (*pos == 0x0020) {
+		else if (runes[i] == 0x0020) {
 			++(*count)[halfspace];
 		}
 
 		// Fullwidth space
-		else if (*pos == 0x3000) {
+		else if (runes[i] == 0x3000) {
 			++(*count)[fullspace];
 		}
 
 		// Hiragana
-		else if (0x3040 <= *pos && *pos <= 0x309F
-			&& (
-				ifNotSetting(voiced, hiragana, 0x309b <= *pos && *pos <= 0x309c)
-				&& ifNotSetting(hiraIteration, hirakata, 0x309d <= *pos && *pos <= 0x309e)
-				)
-			|| (
-				ifSetting(stop, hiragana, 0x3001 <= *pos && *pos <= 0x3002)
-				|| ifSetting(halfStop, hiragana, *pos == 0xff61 || *pos == 0xff64)
-				|| ifSetting(halfVoiced, hiragana, 0xff9e <= *pos && *pos <= 0xff9f)
-				|| ifSetting(prolonged, hiragana, *pos == 0x30fc)
-				|| ifSetting(halfProlonged, hiragana, *pos == 0xff70)
-				|| ifSetting(repeat, hiragana, 0x3031 <= *pos && *pos <= 0x3035)
-				)
+		else if (
+			0x3040 <= runes[i] && runes[i] <= 0x309F
+			// Exclude characters if not setting
+			&& (settings[settings::voiced] == settings::hiragana || !(0x309b == runes[i] || runes[i] == 0x309c))
+			&& (settings[settings::hiraIteration] == settings::hirakata || !(runes[i] == 0x309d || runes[i] == 0x309e))
+			// Include characters on setting
+			|| (settings[settings::stop] == settings::hiragana && (runes[i] == 0x3001 || runes[i] == 0x3002))
+			|| (settings[settings::halfStop] == settings::hiragana && (runes[i] == 0xff61 || runes[i] == 0xff64))
+			|| (settings[settings::halfVoiced] == settings::hiragana && (runes[i] == 0xff9e || runes[i] == 0xff9f))
+			|| (settings[settings::prolonged] == settings::hiragana && runes[i] == 0x30fc)
+			|| (settings[settings::halfProlonged] == settings::hiragana && runes[i] == 0xff70)
+			|| (settings[settings::repeat] == settings::hiragana && 0x3031 <= runes[i] && runes[i] <= 0x3035)
 			) {
 			++(*count)[hiragana];
 		}
 
 		// Katakana
-		else if (0x30A0 <= *pos && *pos <= 0x30FF
-			&& (
-				ifNotSetting(prolonged, katakana, *pos == 0x30fc)
-				&& ifNotSetting(hiraIteration, hirakata, 0x30fd <= *pos && *pos <= 0x30fe)
-				&& ifNotSetting(middle, katahalf, *pos == 0x30fb)
-				)
-			|| (
-				ifSetting(stop, katakana, 0x3001 <= *pos && *pos <= 0x3002)
-				|| ifSetting(halfStop, katakana, *pos == 0xff61 || *pos == 0xff64)
-				|| ifSetting(halfVoiced, katakana, 0xff9e <= *pos && *pos <= 0xff9f)
-				|| ifSetting(halfProlonged, katakana, *pos == 0xff70)
-				)
+		else if (
+			0x30A0 <= runes[i] && runes[i] <= 0x30FF
+			&& (settings[settings::prolonged] == settings::katakana || !(runes[i] == 0x30fc))
+			&& (settings[settings::hiraIteration] == settings::hirakata || !(0x30fd <= runes[i] && runes[i] <= 0x30fe))
+			&& (settings[settings::middle] == settings::katahalf || !(runes[i] == 0x30fb))
+			|| (settings[settings::stop] == settings::katakana && (runes[i] == 0x3001 || runes[i] == 0x3002))
+			|| (settings[settings::halfStop] == settings::katakana && (runes[i] == 0xff61 || runes[i] == 0xff64))
+			|| (settings[settings::halfVoiced] == settings::katakana && (runes[i] == 0xff9e || runes[i] == 0xff9f))
+			|| (settings[settings::halfProlonged] == settings::katakana && runes[i] == 0xff70)
 			) {
 			++(*count)[katakana];
 		}
 
 		// CJK unified ideograph range
-		else if (0x4E00 <= *pos && *pos <= 0x9FFF
-			|| (
-				ifSetting(cjkIteration, cjk, *pos == 0x3005)
-				|| ifSetting(closing, cjk, *pos == 0x3006)
-				|| ifSetting(numberZero, cjk, *pos == 0x3007)
-				)
+		else if (
+			0x4E00 <= runes[i] && runes[i] <= 0x9FFF
+			|| (settings[settings::cjkIteration] == settings::cjk && runes[i] == 0x3005)
+			|| (settings[settings::closing] == settings::cjk && runes[i] == 0x3006)
+			|| (settings[settings::numberZero] == settings::cjk && runes[i] == 0x3007)
 			) {
 			++(*count)[cjk];
 		}
 
 		// Halfwidth katakana
-		else if (0xFF61 <= *pos && *pos <= 0xFF9F
-			&& (
-				ifNotSetting(halfStop, halfkana, *pos == 0xff61 || *pos == 0xff64)
-				&& ifNotSetting(halfVoiced, halfkana, 0xff9e <= *pos && *pos <= 0xff9f)
-				&& ifNotSetting(halfProlonged, halfkana, *pos == 0xff70)
-				&& ifNotSetting(corner, halfkana, 0xff62 <= *pos && *pos <= 0xff63)
-				&& ifNotSetting(middle, katahalf, *pos == 0xff65)
-				)
+		else if (
+			0xFF61 <= runes[i] && runes[i] <= 0xFF9F
+			&& (settings[settings::halfStop] == settings::halfkana || !(runes[i] == 0xff61 || runes[i] == 0xff64))
+			&& (settings[settings::halfVoiced] == settings::halfkana || !(runes[i] == 0xff9e || runes[i] == 0xff9f))
+			&& (settings[settings::halfProlonged] == settings::halfkana || !(runes[i] == 0xff70))
+			&& (settings[settings::corner] == settings::halfkana || !(runes[i] == 0xff62 || runes[i] == 0xff63))
+			&& (settings[settings::middle] == settings::katahalf || !(runes[i] == 0xff65))
 			) {
 			++(*count)[halfkatakana];
 		}
 	}
 }
 
+inline bool isLowSurrogate(wchar_t c) {
+	return c >= 0xdc00 && c <= 0xdfff;
+}
+
+void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
+	dst->clear();
+	dst->reserve(src.size());
+
+	for (size_t srcI = 0; srcI < src.size();) {
+		if (srcI + 1 < src.size() && isLowSurrogate(src[srcI + 1])) {
+			const int offset = 0x10000 - (0xD800 << 10) - 0xDC00;
+			dst->push_back((src[srcI] << 10) + src[srcI + 1] + offset);
+			srcI += 2;
+		} else {
+			dst->push_back(src[srcI]);
+			srcI++;
+		}
+	}
+}
+
 // Returns the sums of each kind of character.
-std::array<long, countsSize>
-count(bool* selection,
+countResult
+count(
 	HWND editor,
-	const std::array<unsigned char, settings::settingsSize>& settings) {
+	const std::array<unsigned char, settings::settingsSize>& settings
+) {
 	WCHAR progressTextHalf[50];
-	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, 50));
+	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, std::size(progressTextHalf)));
 
 	POINT_PTR start;
 	Editor_GetSelStart(editor, POS_LOGICAL_W, &start);
@@ -218,9 +196,10 @@ count(bool* selection,
 		return Editor_IsCharHalfOrFull(editor, c);
 	};
 
-	if (start.y == end.y && start.x == end.x) { // Whole document
-		*selection = false;
+	std::wstring text;
+	std::vector<int> runes;
 
+	if (start.y == end.y && start.x == end.x) { // Whole document
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
@@ -229,12 +208,14 @@ count(bool* selection,
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
 
-			long textSize = static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL));
-			wchar_t* text = new wchar_t[textSize];
-			lineInfo.cch = textSize;
-			Editor_GetLineW(editor, &lineInfo, text);
+			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 
-			countText(text, textSize, &counts, getWidth, settings);
+			lineInfo.cch = text.size() + 1;
+			Editor_GetLineW(editor, &lineInfo, text.data());
+
+			wcharToRunes(&runes, text);
+
+			countText(runes, &counts, getWidth, settings);
 
 			if ((i & 0xffff) == 0) {
 				std::wstring progressText
@@ -244,23 +225,22 @@ count(bool* selection,
 					+ L"%";
 				Editor_SetStatusW(editor, progressText.c_str());
 			}
-			delete[] text;
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		*selection = true;
-
 		long textSize = static_cast<long>(Editor_GetSelTextW(editor, 0, NULL));
-		wchar_t* text = new wchar_t[textSize];
-		VERIFY(text);
-		Editor_GetSelTextW(editor, textSize, text);
+		text.resize(textSize - 1);
 
-		countText(text, textSize, &counts, getWidth, settings);
+		Editor_GetSelTextW(editor, textSize, text.data());
+
+		wcharToRunes(&runes, text);
+
+		countText(runes, &counts, getWidth, settings);
 		counts[selStart] = (int)start.y + 1;
 		counts[selEnd] = (int)end.y + 1;
 
 		counts[logicalLines] = end.y - start.y + 1;
-		
+
 		POINT_PTR viewStart;
 		Editor_GetSelStart(editor, POS_VIEW, &viewStart);
 
@@ -268,8 +248,6 @@ count(bool* selection,
 		Editor_GetSelEnd(editor, POS_VIEW, &viewEnd);
 
 		counts[viewLines] = viewEnd.y - viewStart.y + 1;
-
-		delete[] text;
 	}
 
 	// Don't count control characters (except tabs) in character sum
@@ -294,6 +272,6 @@ count(bool* selection,
 		counts[chars] += counts[logicalLines] - 1;
 	}
 
-	return counts;
+	return countResult{counts, start.y != end.y || start.x != end.x };
 }
 }

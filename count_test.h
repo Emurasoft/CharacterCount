@@ -8,6 +8,46 @@ HINSTANCE EEGetLocaleInstanceHandle() { // Resolves linking issue
 
 namespace {
 
+TEST(count, wcharToRunes) {
+	struct test {
+		const std::wstring src;
+		const std::vector<int> expected;
+	};
+
+	std::vector<test> tests{
+		{
+			L"",
+			{},
+		},
+		{
+			L"a",
+			{'a'},
+		},
+		{
+			L"aa",
+			{'a', 'a'},
+		},
+		{
+			L"\xd800\xdc00",
+			{0x10000},
+		},
+		{
+			L"\xd800\xdc00\xd800\xdc00",
+			{0x10000,0x10000},
+		},
+		{
+			L"\xdc00",
+			{0xdc00},
+		},
+	};
+
+	std::vector<int> dst;
+	for (size_t i = 0; i < tests.size(); ++i) {
+		count::wcharToRunes(&dst, tests[i].src);
+		EXPECT_EQ(dst, tests[i].expected) << "i=" << i;
+	}
+}
+
 std::function<int(unsigned int c)> getWidth = [](unsigned int c) {
 	if (c == 0x3042 || c == 0x30A2 || c == 0x4e00 || c == 0x3000 || c == 0x3001 || c == 0xff61 || c == 0x309b || c == 0x30fc || c == 0x30fb
 		|| c == 0x3031 || c == 0x309d || c == 3005 || c == 0x3006 || c == 0x3007) {
@@ -41,7 +81,7 @@ std::string countsString(const std::array<long, count::countsSize>& counts) {
 
 TEST(count, countText) {
 	std::vector<std::tuple<std::array<unsigned char, settings::settingsSize>, std::array<long, count::countsSize>>> tests{
-		{ // 00. default
+		{ // 0. default
 			settings::defaultSettings,
 			{21,0,0,2,2,0,0,1,34,8,13,1,1,1,3,1,3,3,5},
 		},
@@ -159,11 +199,13 @@ TEST(count, countText) {
 		},
 	};
 
-	for (size_t i = 0; i < tests.size(); ++i) {
-		std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
-		std::array<long, count::countsSize> result{};
+	std::wstring text = L"àあアｱ一	 　\r\n、｡゛ﾞーｰ｢・〱ゝ々〆〇";
+	std::vector<int> runes;
+	count::wcharToRunes(&runes, text);
 
-		count::countText(const_cast<wchar_t*>(text.c_str()), text.size() + 1, &result, getWidth, std::get<0>(tests[i]));
+	for (size_t i = 0; i < tests.size(); ++i) {
+		std::array<long, count::countsSize> result{};
+		count::countText(runes, &result, getWidth, std::get<0>(tests[i]));
 
 		result[count::logicalLines] = 2;
 		result[count::viewLines] = 2;

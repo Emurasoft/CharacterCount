@@ -18,8 +18,8 @@ From the dialog window, you can click on "Copy" or press Ctrl+C to copy a text-b
 The following list describes the Unicode code point(s) that each type of character is defined as, when default settings are used. The classifications of characters under default settings match those in the current Unicode standard.
 
 * Characters - U+0000 to U+10FFFF
-* Logical lines - Number of lines in file
-* View lines - Number of lines shown in editor
+* Logical lines - Number of lines in selection or document
+* View lines - Number of lines after wrapping is applied
 * LF - U+000A
 * CR - U+000D
 * CR+LF - U+000D and U+000A

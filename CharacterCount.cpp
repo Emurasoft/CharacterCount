@@ -126,8 +126,7 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	SetWindowText(settingsLink, settingsLinkText.c_str());
 
 	// Count
-	bool selection;
-	std::array<long, count::countsSize> counts = count::count(&selection, editor, settings);
+	count::countResult result = count::count(editor, settings);
 
 	// DPI dependent measurement unit
 	RECT buttonRect;
@@ -139,20 +138,21 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	GetWindowRect(hwnd, &windowRect);
 	SetWindowPos(hwnd, NULL, 0, 0,
 		static_cast<int>(cy * 18.9318182),
-		windowRect.bottom - windowRect.top - static_cast<int>(!selection * cy * 1.6),
+		windowRect.bottom - windowRect.top - static_cast<int>(!result.selection * cy * 1.6),
 		SWP_NOMOVE);
 
-	moveControl(closeButton, cy, selection);
-	moveControl(copyButton, cy, selection);
-	moveControl(settingsLink, cy, selection);
+	moveControl(closeButton, cy, result.selection);
+	moveControl(copyButton, cy, result.selection);
+	moveControl(settingsLink, cy, result.selection);
 
 	// Heading
 	WCHAR heading[25];
 	int idsHeading;
-	if (selection)
+	if (result.selection) {
 		idsHeading = IDS_HEADINGSELECTED;
-	else
+	} else {
 		idsHeading = IDS_HEADINGDOCUMENT;
+	}
 	VERIFY(LoadString(localeInstanceHandle, idsHeading, heading, 25));
 
 	RECT clientRect;
@@ -165,7 +165,7 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	SendMessage(text, WM_SETFONT, (WPARAM)font, NULL);
 
 	// If small numbers, decrease space between columns
-	bool narrowUI = *std::max_element(counts.begin(), counts.end()) < 100000;
+	bool narrowUI = *std::max_element(result.counts.begin(), result.counts.end()) < 100000;
 
 	// for testing GUI
 #ifdef _DEBUG
@@ -177,19 +177,19 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	std::wstring textOutput;
 
 	for (int i = 0; i < count::countsSize; ++i) {
-		if (selection || (i != count::selStart && i != count::selEnd)) {
+		if (result.selection || (i != count::selStart && i != count::selEnd)) {
 
 			WCHAR label[25];
 			VERIFY(LoadString(localeInstanceHandle, IDS_LABEL100 + i, label, 25));
-			RECT lCol = leftColumn(cy, i, !selection, narrowUI);
+			RECT lCol = leftColumn(cy, i, !result.selection, narrowUI);
 			text = CreateWindow(L"STATIC", label, WS_VISIBLE | WS_CHILD,
 				lCol.left, lCol.top, lCol.right, lCol.bottom,
 				hwnd, NULL, NULL, NULL);
 			SendMessage(text, WM_SETFONT, (WPARAM)font, NULL);
 
-			std::wstring number = std::to_wstring(counts[i]);
+			std::wstring number = std::to_wstring(result.counts[i]);
 
-			RECT rCol = rightColumn(cy, i, !selection, narrowUI);
+			RECT rCol = rightColumn(cy, i, !result.selection, narrowUI);
 			text = CreateWindow(L"EDIT", withCommas(number).c_str(),
 				WS_CHILD | WS_VISIBLE | ES_READONLY | ES_RIGHT,
 				rCol.left, rCol.top, rCol.right, rCol.bottom,
