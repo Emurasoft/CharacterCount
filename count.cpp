@@ -235,8 +235,7 @@ count(
 			if ((i & 0xffff) == 0) {
 				std::wstring progressText
 					= progressTextHalf
-					+ std::to_wstring(static_cast<int>(static_cast<double>(i) / counts[logicalLines]
-						* 100))
+					+ std::to_wstring(static_cast<int>(static_cast<double>(i) / counts[logicalLines] * 100))
 					+ L"%";
 				Editor_SetStatusW(editor, progressText.c_str());
 			}
@@ -266,7 +265,7 @@ count(
 	counts[halfwidth] -= counts[controlCharacters] - counts[tabCharacters];
 
 	// This shouldn't happpen, but you never know.
-	VERIFY(counts[chars] >= 0 && counts[halfwidth] >= 0);
+	assert(counts[chars] >= 0 && counts[halfwidth] >= 0);
 	if (counts[chars] < 0) {
 		counts[chars] = 0;
 	}
