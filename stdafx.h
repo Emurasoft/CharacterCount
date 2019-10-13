@@ -17,6 +17,7 @@
 #include <mutex>
 #include <tuple>
 #include <functional>
+#include <assert.h>
 
 #ifdef _DEBUG
 #define VERIFY(f) _ASSERTE(f)

@@ -8,7 +8,7 @@
 #include "count.h"
 
 namespace count {
-inline bool baseCharacter(int c) {
+bool baseCharacter(int c) {
 	return !(
 		(0xdc00 <= c && c <= 0xdfff)	// Trailing surrogate
 		|| 0x3099 == c || c == 0x309a	// Hiragana combination
@@ -154,7 +154,7 @@ void countText(
 	}
 }
 
-inline bool isLowSurrogate(wchar_t c) {
+bool isLowSurrogate(wchar_t c) {
 	return c >= 0xdc00 && c <= 0xdfff;
 }
 
@@ -172,6 +172,29 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 			srcI++;
 		}
 	}
+}
+
+// trimNull trims null characters from the end of s. This happens because EmEditor returns a higher
+// than expected size value if text contains \n.
+void trimLastNull(std::wstring* s) {
+	size_t index = s->find_first_of(L'\0');
+	if (index != std::wstring::npos) {
+		s->resize(index);
+	}
+}
+
+void getLineText(std::wstring* dst, HWND editor, int line) {
+	GET_LINE_INFO lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(line), 0 };
+	dst->resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
+	lineInfo.cch = dst->size() + 1;
+	Editor_GetLineW(editor, &lineInfo, dst->data());
+	trimLastNull(dst);
+}
+
+void getSelText(std::wstring* dst, HWND editor) {
+	dst->resize(static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL)) - 1);
+	Editor_GetSelTextW(editor, dst->size() + 1, dst->data());
+	trimLastNull(dst);
 }
 
 // Returns the sums of each kind of character.
@@ -203,16 +226,8 @@ count(
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
-		GET_LINE_INFO lineInfo;
-
 		for (long i = 0; i < counts[logicalLines]; ++i) {
-			lineInfo = { 0, FLAG_LOGICAL | FLAG_WITH_CRLF, static_cast<UINT_PTR>(i), 0 };
-
-			text.resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
-
-			lineInfo.cch = text.size() + 1;
-			Editor_GetLineW(editor, &lineInfo, text.data());
-
+			getLineText(&text, editor, i);
 			wcharToRunes(&runes, text);
 
 			countText(runes, &counts, getWidth, settings);
@@ -220,19 +235,14 @@ count(
 			if ((i & 0xffff) == 0) {
 				std::wstring progressText
 					= progressTextHalf
-					+ std::to_wstring(static_cast<int>(static_cast<double>(i) / counts[logicalLines]
-						* 100))
+					+ std::to_wstring(static_cast<int>(static_cast<double>(i) / counts[logicalLines] * 100))
 					+ L"%";
 				Editor_SetStatusW(editor, progressText.c_str());
 			}
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		size_t textSize = static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL));
-		text.resize(textSize - 1);
-
-		Editor_GetSelTextW(editor, textSize, text.data());
-
+		getSelText(&text, editor);
 		wcharToRunes(&runes, text);
 
 		countText(runes, &counts, getWidth, settings);
@@ -255,7 +265,7 @@ count(
 	counts[halfwidth] -= counts[controlCharacters] - counts[tabCharacters];
 
 	// This shouldn't happpen, but you never know.
-	VERIFY(counts[chars] >= 0 && counts[halfwidth] >= 0);
+	assert(counts[chars] >= 0 && counts[halfwidth] >= 0);
 	if (counts[chars] < 0) {
 		counts[chars] = 0;
 	}
