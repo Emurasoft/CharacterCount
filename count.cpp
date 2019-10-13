@@ -8,7 +8,7 @@
 #include "count.h"
 
 namespace count {
-inline bool baseCharacter(int c) {
+bool baseCharacter(int c) {
 	return !(
 		(0xdc00 <= c && c <= 0xdfff)	// Trailing surrogate
 		|| 0x3099 == c || c == 0x309a	// Hiragana combination
@@ -154,7 +154,7 @@ void countText(
 	}
 }
 
-inline bool isLowSurrogate(wchar_t c) {
+bool isLowSurrogate(wchar_t c) {
 	return c >= 0xdc00 && c <= 0xdfff;
 }
 
@@ -172,6 +172,12 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 			srcI++;
 		}
 	}
+}
+
+// trimNull trims null characters from the end of s. This happens because EmEditor returns a higher
+// than expected size value if text contains \n.
+void trimLastNull(std::wstring* s) {
+	s->resize(s->find_first_of(L'\0'));
 }
 
 void getLineText(std::wstring* dst, HWND editor, int line) {
@@ -215,12 +221,8 @@ count(
 		counts[logicalLines] = static_cast<long>(Editor_GetLines(editor, POS_LOGICAL_W));
 		counts[viewLines] = static_cast<long>(Editor_GetLines(editor, POS_VIEW));
 
-		GET_LINE_INFO lineInfo;
-
 		for (long i = 0; i < counts[logicalLines]; ++i) {
 			getLineText(&text, editor, i);
-			Editor_GetLineW(editor, &lineInfo, text.data());
-
 			wcharToRunes(&runes, text);
 
 			countText(runes, &counts, getWidth, settings);
@@ -236,10 +238,7 @@ count(
 		}
 		Editor_SetStatusW(editor, L"");
 	} else { // Selection
-		auto test = Editor_GetSelTextW(editor, 0, NULL);
-		text.resize(static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL)) - 1);
-		Editor_GetSelTextW(editor, text.size() + 1, text.data());
-
+		getSelText(&text, editor);
 		wcharToRunes(&runes, text);
 
 		countText(runes, &counts, getWidth, settings);
