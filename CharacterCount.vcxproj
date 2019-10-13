@@ -147,7 +147,8 @@
       <ModuleDefinitionFile>template/exports.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)"  "..\bin\CharacterCount1"</Command>
+      <Command>
+      </Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -179,7 +180,8 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)"  "..\bin\CharacterCount1"</Command>
+      <Command>
+      </Command>
       <Message>
       </Message>
     </PostBuildEvent>
