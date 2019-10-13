@@ -177,7 +177,10 @@ void wcharToRunes(std::vector<int>* dst, const std::wstring& src) {
 // trimNull trims null characters from the end of s. This happens because EmEditor returns a higher
 // than expected size value if text contains \n.
 void trimLastNull(std::wstring* s) {
-	s->resize(s->find_first_of(L'\0'));
+	size_t index = s->find_first_of(L'\0');
+	if (index != std::wstring::npos) {
+		s->resize(index);
+	}
 }
 
 void getLineText(std::wstring* dst, HWND editor, int line) {
