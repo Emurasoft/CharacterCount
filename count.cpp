@@ -185,11 +185,13 @@ void getLineText(std::wstring* dst, HWND editor, int line) {
 	dst->resize(static_cast<long>(Editor_GetLineW(editor, &lineInfo, NULL)) - 1);
 	lineInfo.cch = dst->size() + 1;
 	Editor_GetLineW(editor, &lineInfo, dst->data());
+	trimLastNull(dst);
 }
 
 void getSelText(std::wstring* dst, HWND editor) {
 	dst->resize(static_cast<size_t>(Editor_GetSelTextW(editor, 0, NULL)) - 1);
 	Editor_GetSelTextW(editor, dst->size() + 1, dst->data());
+	trimLastNull(dst);
 }
 
 // Returns the sums of each kind of character.
