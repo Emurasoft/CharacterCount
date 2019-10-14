@@ -44,8 +44,11 @@ void deleteSettings() {
 	HKEY key;
 	RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\EmSoft\\EmEditorPlugIns",
 		0, KEY_SET_VALUE, &key);
-	RegDeleteKey(key, L"CharacterCount");
-	// RegCloseKey
+	if (key != NULL) {
+		RegDeleteKey(key, L"CharacterCount");
+		RegFlushKey(key);
+		RegCloseKey(key);
+	}
 }
 
 }
