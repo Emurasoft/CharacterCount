@@ -107,22 +107,22 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	// Title
 	HINSTANCE localeInstanceHandle = EEGetLocaleInstanceHandle();
 	WCHAR title[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_PLUGIN_NAME, title, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_PLUGIN_NAME, title, stringSize));
 	SetWindowText(hwnd, title);
 
 	// Button text
 	WCHAR closeText[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_CLOSE, closeText, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_CLOSE, closeText, stringSize));
 	HWND closeButton = GetDlgItem(hwnd, IDCANCEL);
 	SetWindowText(closeButton, closeText);
 
 	WCHAR copyText[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_COPY, copyText, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_COPY, copyText, stringSize));
 	HWND copyButton = GetDlgItem(hwnd, IDCOPY);
 	SetWindowText(copyButton, copyText);
 
 	WCHAR settingsText[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_SETTINGS, settingsText, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_SETTINGS, settingsText, stringSize));
 	std::wstring settingsLinkText = L"<a href=\"settings\">" + std::wstring(settingsText) + L"</a>";
 	HWND settingsLink = GetDlgItem(hwnd, IDSETTINGSLINK);
 	SetWindowText(settingsLink, settingsLinkText.c_str());
@@ -155,7 +155,7 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	} else {
 		idsHeading = IDS_HEADINGDOCUMENT;
 	}
-	VERIFY(LoadString(localeInstanceHandle, idsHeading, heading, 25));
+	VERIFY(LoadString(localeInstanceHandle, idsHeading, heading, stringSize));
 
 	RECT clientRect;
 	GetClientRect(hwnd, &clientRect);
@@ -211,11 +211,11 @@ void copyInfo(HWND hwnd, HWND editor, const std::wstring& textOutput) {
 	if (Editor_InsertClip(editor, textOutput.c_str(),
 		Editor_GetClipPos(editor), SEL_TYPE_LINE) == -1) {
 		WCHAR errorMsg[stringSize];
-		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_NOTCOPIED, errorMsg, 25));
+		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_NOTCOPIED, errorMsg, stringSize));
 		MessageBox(hwnd, errorMsg, NULL, MB_OK);
 	} else { // success
 		WCHAR copiedText[stringSize];
-		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_COPIED, copiedText, 25));
+		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_COPIED, copiedText, stringSize));
 		SendMessage(GetDlgItem(hwnd, IDCOPY), WM_SETTEXT, NULL, (LPARAM)copiedText);
 	}
 	SendMessage(hwnd, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(hwnd, IDCANCEL), TRUE);
