@@ -1,5 +1,5 @@
 # 文字数カウント (CharacterCount)
-Copyright © Emurasoft Inc. 2019
+Copyright © Emurasoft Inc. 2020
 Licensed under the MIT license. See LICENSE for details.
 
 文字数カウント プラグインは、文書内に様々な種類の文字が何個含まれているかを調べることができます。KKSoftWare 様によって作成され多くの方に利用されている Text Information プラグインを参考にしました。文字数カウント プラグインは、Text Information プラグインと同機能を含みながら、64-bit 版を追加しました。

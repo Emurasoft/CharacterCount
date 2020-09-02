@@ -1,5 +1,5 @@
 # CharacterCount
-Copyright © Emurasoft Inc. 2019
+Copyright © Emurasoft Inc. 2020
 Licensed under the MIT license. See LICENSE for details.
 
 CharacterCount, a plug-in for EmEditor, counts the sums of various types of characters in your document. This plug-in is inspired by the Text Information plug-in by KKSoftWare. CharacterCount retains the same feature sets from Text Information, but adds a 64-bit compatible version.
