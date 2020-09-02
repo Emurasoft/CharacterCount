@@ -1,5 +1,5 @@
 # CharacterCount
-Copyright © Emurasoft Inc. 2019<br>
+Copyright © Emurasoft Inc. 2020<br>
 Licensed under the MIT license. See LICENSE for details.
 
 This is the source code for CharacterCount, a plug-in for [EmEditor](https://www.emeditor.com/). Release binaries are found in [bin/CharacterCount](bin/CharacterCount). More information about this program are written in [bin/CharacterCount/readMeEnglish.md](bin/CharacterCount1/readMeEnglish.md).
