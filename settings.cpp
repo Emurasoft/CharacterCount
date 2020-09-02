@@ -64,7 +64,7 @@ HWND createComboBox(HWND hwnd, int cy, int row, HFONT font, HINSTANCE localeInst
 
 	for (int labelIndex : menus[row]) {
 		WCHAR label[stringSize];
-		VERIFY(LoadString(localeInstanceHandle, IDS_LABEL300 + labelIndex, label, 25));
+		VERIFY(LoadString(localeInstanceHandle, IDS_LABEL300 + labelIndex, label, stringSize));
 		SendMessage(comboBox, CB_ADDSTRING, NULL, (LPARAM)label);
 	}
 
@@ -79,16 +79,16 @@ std::array<HWND, settingsSize> initSettings(HWND hwnd,
 	// Add text
 	HINSTANCE localeInstanceHandle = EEGetLocaleInstanceHandle();
 	WCHAR title[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_PLUGIN_NAME, title, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_PLUGIN_NAME, title, stringSize));
 	SetWindowText(hwnd, title);
 
 	WCHAR okText[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_OK, okText, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_OK, okText, stringSize));
 	SetWindowText(GetDlgItem(hwnd, IDOK), okText);
 
 	WCHAR resetText[stringSize];
 	HWND resetButton = GetDlgItem(hwnd, IDRESET);
-	VERIFY(LoadString(localeInstanceHandle, IDS_RESET, resetText, 25));
+	VERIFY(LoadString(localeInstanceHandle, IDS_RESET, resetText, stringSize));
 	SetWindowText(resetButton, resetText);
 
 	HFONT font = (HFONT)SendMessage(hwnd, WM_GETFONT, 0, 0);
@@ -110,7 +110,7 @@ std::array<HWND, settingsSize> initSettings(HWND hwnd,
 	GetClientRect(hwnd, &clientRect);
 
 	WCHAR heading[stringSize];
-	VERIFY(LoadString(localeInstanceHandle, IDS_HEADINGSETTINGS, heading, 50));
+	VERIFY(LoadString(localeInstanceHandle, IDS_HEADINGSETTINGS, heading, stringSize));
 	HWND text = CreateWindow(L"STATIC", heading, WS_VISIBLE | WS_CHILD | SS_CENTER, 0, cy / 2,
 		clientRect.right - clientRect.left, cy, hwnd, NULL, NULL, NULL);
 	SendMessage(text, WM_SETFONT, (WPARAM)font, NULL);
@@ -120,7 +120,7 @@ std::array<HWND, settingsSize> initSettings(HWND hwnd,
 
 	for (int i = 0; i < settingsSize; ++i) {
 		WCHAR label[stringSize];
-		VERIFY(LoadString(localeInstanceHandle, IDS_LABEL200 + i, label, 100));
+		VERIFY(LoadString(localeInstanceHandle, IDS_LABEL200 + i, label, stringSize));
 		RECT lCol = settingsLeftColumn(cy, i);
 		text = CreateWindow(L"STATIC", label, WS_VISIBLE | WS_CHILD,
 			lCol.left, lCol.top, lCol.right, lCol.bottom,
@@ -149,7 +149,7 @@ storeSelSettings(HWND hwnd,
 
 	if (!writeSettings(editor, newSettings)) {
 		WCHAR message[stringSize];
-		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_COULDNTSAVE, message, 50));
+		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_COULDNTSAVE, message, stringSize));
 		MessageBox(hwnd, message, NULL, MB_ICONWARNING);
 	};
 
@@ -159,7 +159,7 @@ storeSelSettings(HWND hwnd,
 // Returns true if OK pressed on confirmation.
 bool confirmReset(HWND hwnd) {
 	WCHAR message[stringSize];
-	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_CONFIRMRESET, message, 50));
+	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_CONFIRMRESET, message, stringSize));
 	return MessageBox(hwnd, message, NULL, MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2)
 		== IDYES;
 }
