@@ -21,7 +21,7 @@ std::array<unsigned char, settingsSize> readSettings(HWND editor) {
 	if (dataSize != settingsSize)
 		return defaultSettings;
 
-	std::array<unsigned char, settingsSize> loadSettings;
+	std::array<unsigned char, settingsSize> loadSettings = {0};
 	for (unsigned char i = 0; i < settingsSize; ++i) {
 		if (std::find(menus[i].begin(), menus[i].end(), readData[i]) != menus[i].end()) {
 			loadSettings[i] = readData[i];
