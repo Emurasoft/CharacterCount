@@ -13,6 +13,8 @@ _ETL_IMPLEMENT
 
 namespace charCount {
 
+const size_t stringSize = 512;
+
 // Centers window. Copied over from other projects.
 void CenterWindow(HWND hDlg) {
 	RECT myrt, prrt;
@@ -104,22 +106,22 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 
 	// Title
 	HINSTANCE localeInstanceHandle = EEGetLocaleInstanceHandle();
-	WCHAR title[25];
+	WCHAR title[stringSize];
 	VERIFY(LoadString(localeInstanceHandle, IDS_PLUGIN_NAME, title, 25));
 	SetWindowText(hwnd, title);
 
 	// Button text
-	WCHAR closeText[25];
+	WCHAR closeText[stringSize];
 	VERIFY(LoadString(localeInstanceHandle, IDS_CLOSE, closeText, 25));
 	HWND closeButton = GetDlgItem(hwnd, IDCANCEL);
 	SetWindowText(closeButton, closeText);
 
-	WCHAR copyText[25];
+	WCHAR copyText[stringSize];
 	VERIFY(LoadString(localeInstanceHandle, IDS_COPY, copyText, 25));
 	HWND copyButton = GetDlgItem(hwnd, IDCOPY);
 	SetWindowText(copyButton, copyText);
 
-	WCHAR settingsText[25];
+	WCHAR settingsText[stringSize];
 	VERIFY(LoadString(localeInstanceHandle, IDS_SETTINGS, settingsText, 25));
 	std::wstring settingsLinkText = L"<a href=\"settings\">" + std::wstring(settingsText) + L"</a>";
 	HWND settingsLink = GetDlgItem(hwnd, IDSETTINGSLINK);
@@ -146,7 +148,7 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	moveControl(settingsLink, cy, result.selection);
 
 	// Heading
-	WCHAR heading[25];
+	WCHAR heading[stringSize];
 	int idsHeading;
 	if (result.selection) {
 		idsHeading = IDS_HEADINGSELECTED;
@@ -179,7 +181,7 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 	for (int i = 0; i < count::countsSize; ++i) {
 		if (result.selection || (i != count::selStart && i != count::selEnd)) {
 
-			WCHAR label[25];
+			WCHAR label[stringSize];
 			VERIFY(LoadString(localeInstanceHandle, IDS_LABEL100 + i, label, 25));
 			RECT lCol = leftColumn(cy, i, !result.selection, narrowUI);
 			text = CreateWindow(L"STATIC", label, WS_VISIBLE | WS_CHILD,
@@ -208,11 +210,11 @@ std::wstring initDialog(HWND hwnd, HWND editor,
 void copyInfo(HWND hwnd, HWND editor, const std::wstring& textOutput) {
 	if (Editor_InsertClip(editor, textOutput.c_str(),
 		Editor_GetClipPos(editor), SEL_TYPE_LINE) == -1) {
-		WCHAR errorMsg[25];
+		WCHAR errorMsg[stringSize];
 		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_NOTCOPIED, errorMsg, 25));
 		MessageBox(hwnd, errorMsg, NULL, MB_OK);
 	} else { // success
-		WCHAR copiedText[25];
+		WCHAR copiedText[stringSize];
 		VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_COPIED, copiedText, 25));
 		SendMessage(GetDlgItem(hwnd, IDCOPY), WM_SETTEXT, NULL, (LPARAM)copiedText);
 	}

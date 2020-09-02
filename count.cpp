@@ -44,7 +44,7 @@ void countText(
 			++(*count)[chars];
 
 			// Halfwidth/fullwidth
-			if (runes[i] < widthTable.size()) { // TODO turn widthTable into a class
+			if (runes[i] < widthTable.size()) {
 				if (widthTable[runes[i]] == 0) {
 					widthTable[runes[i]] = getWidth(runes[i]);
 				}
@@ -203,7 +203,7 @@ count(
 	HWND editor,
 	const std::array<unsigned char, settings::settingsSize>& settings
 ) {
-	WCHAR progressTextHalf[50];
+	WCHAR progressTextHalf[512];
 	VERIFY(LoadString(EEGetLocaleInstanceHandle(), IDS_PROGRESS, progressTextHalf, static_cast<int>(std::size(progressTextHalf))));
 
 	POINT_PTR start;
